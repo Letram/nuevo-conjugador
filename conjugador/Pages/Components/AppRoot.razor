@@ -1,0 +1,36 @@
+﻿@page "/AppRoot"
+
+<!-- SEARCH FORM -->
+<div id="search_form" class="uk-container">
+    <header>
+        <h1 class="uk-text-center">Escriba un verbo</h1>
+    </header>
+    <div class="form-container">
+        <form class="uk-flex uk-flex-column uk-flex-middle" method="post" asp-page-handler="search">
+            <span class="input-container">
+                <input type="text" name="verb" id="form_verb" asp-for="verb" />
+            </span>
+            <button class="uk-button uk-button-secondary uk-margin-small-top" style="width: 40%;" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+<hr />
+<hr />
+<div class="uk-container">
+    <TablaReconocimientos></TablaReconocimientos>
+</div>
+@code {
+    public Services.LematizadorService servicioLematizador { get; set; }
+    public Services.SpellCheckService servicioCorrector { get; set; }
+
+    private int _selectedIndex { get; set; }
+}
+
+@functions{      
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        servicioLematizador = new Services.LematizadorService();
+        servicioCorrector = new Services.SpellCheckService();
+    }
+}

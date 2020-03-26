@@ -1,0 +1,80 @@
+﻿@using Data
+
+<div id="simple_times_card" class="uk-card uk-card-default uk-card-body">
+    <div class="uk-flex uk-flex-between card-heading">
+        <h3 class="uk-card-title">
+            Tiempos simples
+        </h3>
+        <div>
+            <button class="uk-button uk-button-text close-btn"
+                    uk-toggle="target: #simple_tense_conjugation; animation: uk-animation-fade"
+                    type="button"
+                    onclick="toggle()">
+                Less
+            </button>
+        </div>
+    </div>
+    <div id="simple_tense_conjugation">
+        <div uk-filter="target: .js-filter">
+            <ul class="uk-subnav uk-subnav-pill">
+                <li uk-filter-control><a href="#">Todos los tiempos</a></li>
+                <li uk-filter-control="[data-time='indicativo']" data-color="green"><a href="#">Tiempo indicativo</a></li>
+                <li uk-filter-control="[data-time='subjuntivo']" data-color="blue"><a href="#">Tiempo subjuntivo</a></li>
+                <li uk-filter-control="[data-time='imperativo']" data-color="red"><a href="#">Tiempo imperativo</a></li>
+            </ul>
+            <ul class="js-filter">
+                <li data-time="indicativo">
+                        @if (indicativo != null && indicativo.conjugaciones.Count > 0)
+                        {
+                            <div id="simple_times_indicative" class="uk-grid-match uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-small uk-grid-divider" uk-grid>
+                                @foreach (ConjugacionVerbo conjugacion in indicativo.conjugaciones)
+                                {
+                                    <div class="tense-container">
+                                        <div class="uk-card uk-card-default uk-card-body">
+                                            <div class="verb_tense">
+                                                <div class="uk-card-badge uk-label uk-label-success custom-badge">Indicativo</div>
+                                                <h3 class="uk-card-title">
+                                                    @conjugacion.nombreConjugacion[0]
+                                                </h3>
+                                                <p class="uk-text-meta uk-margin-remove-top additional_info">@conjugacion.nombreConjugacion[1]</p>
+                                                <hr>
+                                                <div class="tense">
+                                                    <p>
+                                                        <span>yo</span> @conjugacion.conjEsp[0]
+                                                    </p>
+                                                    <p>
+                                                        <span>tú</span> @conjugacion.conjEsp[1]
+                                                    </p>
+                                                    <p>
+                                                        <span>él</span> @conjugacion.conjEsp[2]
+                                                    </p>
+                                                    <p>
+                                                        <span>nosotros</span> @conjugacion.conjEsp[3]
+                                                    </p>
+                                                    <p>
+                                                        <span>vosotros</span> @conjugacion.conjEsp[4]
+                                                    </p>
+                                                    <p>
+                                                        <span>ellos</span> @conjugacion.conjEsp[5]
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public ModoVerbo indicativo { get; set; }
+}
+
+@functions{
+    protected override void OnInitialized(){
+    }
+}

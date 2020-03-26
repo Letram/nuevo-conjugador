@@ -1,0 +1,78 @@
+﻿<div class="uk-child-width-expand@s uk-grid-match" uk-grid>
+    <div>
+        <div id="impersonal_simple_card" class="uk-card uk-card-default uk-card-body">
+            <div class="uk-flex uk-flex-between card-heading">
+                <h3 class="uk-card-title">
+                    Forma impersonal
+                </h3>
+                <div>
+                    <button class="uk-button uk-button-text close-btn"
+                            uk-toggle="target: #verb_impersonal_simple; animation: uk-animation-fade"
+                            type="button"
+                            onclick="toggle()">
+                        Less
+                    </button>
+                </div>
+            </div>
+            <div id="verb_impersonal_simple" class="uk-grid-divider" uk-grid>
+                <div class="uk-width-small">
+                    <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_simple">
+                        <li class="uk-active"><a href="#">Infinitivo</a></li>
+                        <li><a href="#">Gerundio</a></li>
+                        <li><a href="#">Participio</a></li>
+                    </ul>
+                </div>
+                <div class="uk-with-expand">
+                    <ul id="impersonal_simple" class="uk-switcher">
+                        <li>Ambientalizar</li>
+                        <li>Ambientalizando</li>
+                        <li>
+                            <div>
+                                <ul class="uk-list">
+                                    <li>Ambientalizado</li>
+                                    <li>Ambientalizada</li>
+                                    <li>Ambientalizados</li>
+                                    <li>Ambientalizadas</li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div id="impersonal_compound_card" class="uk-card uk-card-default uk-card-body">
+            <div class="uk-flex uk-flex-between card-heading">
+                <h3 class="uk-card-title">
+                    Forma impersonal compuesta
+                </h3>
+                <div>
+                    <button class="uk-button uk-button-text close-btn"
+                            uk-toggle="target: #verb_impersonal_compound; animation: uk-animation-fade"
+                            type="button"
+                            onclick="toggle()">
+                        Less
+                    </button>
+                </div>
+            </div>
+            <div id="verb_impersonal_compound" class="uk-grid-divider" uk-grid>
+                <div class="uk-width-small">
+                    <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_compound">
+                        <li class="uk-active"><a href="#">Infinitivo compuesto</a></li>
+                        <li><a href="#">Gerundio compuesto</a></li>
+                    </ul>
+                </div>
+                <div class="uk-with-expand">
+                    <ul id="impersonal_compound" class="uk-switcher">
+                        <li>Haber ambientalizado</li>
+                        <li>Habiendo ambientalizado</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+
+}

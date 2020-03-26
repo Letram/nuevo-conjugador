@@ -1,0 +1,258 @@
+﻿@page "/TableReconocimientos"
+@using Services
+@using ConexionConjugador
+@using ConexionCorrector
+@using ConexionLematizador
+@using Data
+
+@if (reconocimientos.Count > 0)
+{
+    <header id="verb_name">
+        <h1 class="uk-text-center">Conjugación del verbo <b>@reconocimientos[_selectedIndex].FormaCanonica</b></h1>
+    </header>
+    <hr />
+    <div id="results" class="uk-child-width-expand uk-grid-column-medium" uk-grid>
+        @foreach (Reconocimiento reconocimiento in reconocimientos)
+        {
+            int index = reconocimientos.IndexOf(reconocimiento);
+            <div id="@index" class="uk-card uk-card-small uk-card-default @((_selectedIndex == index) ? "selected" : "")"
+                 @onclick="e => GetDataFromSelectedIndex(index)">
+                <p class="uk-text-center">@searchText - (verbo @reconocimiento.FormaCanonica)</p>
+            </div>
+        }
+    </div>
+    <table class="uk-table">
+        <thead>
+            <tr>
+                @foreach (string header in reconocimientoHeaders)
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Reconocimiento reconocimiento in reconocimientos)
+            {
+                <tr>
+                    <td>@reconocimiento.FormaCanonica.</td>
+                    <td>@reconocimiento.Frecuencia</td>
+                    <td>@reconocimiento.IdFlexion</td>
+                    <td>@reconocimiento.IdFormaCanonica</td>
+                    <td>@reconocimiento.Prefijos</td>
+                    <td>@reconocimiento.Pronombres</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <hr />
+    <table class="uk-table">
+        <thead>
+            <tr>
+                @foreach (string header in canonicaHeaders)
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@info.Antigua</td>
+                <td>@info.DRAEXXIII</td>
+                <td>@info.FormaCanonica</td>
+                <td>@info.Frecuencia</td>
+                <td>@info.IdCategoria</td>
+                <td>@info.IdCategoriaGN</td>
+                <td>@info.IdFlexion</td>
+                <td>@info.MaxAcepciones</td>
+                <td>@info.MaxEtimologia</td>
+                <td>@info.NumAcepcion</td>
+                <td>@info.NumAcepcionSec</td>
+                <td>@info.NumEtimologia</td>
+                <td>@info.PosAcepcion</td>
+                <td>@info.PosAcepcionSec</td>
+            </tr>
+        </tbody>
+    </table>
+    <FormasImpersonales></FormasImpersonales>
+    <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" style="justify-content: center;">
+        <label><input class="uk-radio" type="radio" name="spanish_dialect" checked> España</label>
+        <label><input class="uk-radio" type="radio" name="spanish_dialect"> Río de la Plata (voseo)</label>
+        <label><input class="uk-radio" type="radio" name="spanish_dialect"> Canarias (ustedes)</label>
+        <label><input class="uk-radio" type="radio" name="spanish_dialect"> Tratamiento formal, de respeto o cortesía</label>
+    </div>
+    <TablaModos indicativo="modoIndicativo"></TablaModos>
+    @*<Conjugaciones conjugaciones="conjugaciones"></Conjugaciones>*@
+}
+else
+{
+    <header>
+        <h1 class="uk-text-center">Introduzca en el servicio un verbo válido.</h1>
+    </header>
+}
+
+@code{
+    [Parameter] public string searchText { get; set; }
+
+    private LematizadorService _lematizador { get; set; }
+    private ConjugadorService _conjugador { get; set; }
+    private List<Reconocimiento> reconocimientos { get; set; }
+    private List<InfoConjugacion> conjugaciones { get; set; }
+    private InfoCanonica info { get; set; }
+
+    private ModoVerbo modoIndicativo { get; set; }
+
+    private int _selectedIndex { get; set; }
+    public string[] reconocimientoHeaders =
+    {
+            "Forma canónica",
+            "Frecuencia",
+            "Código de flexión",
+            "Código de forma canónica",
+            "Prefijos",
+            "Pronombres"
+        };
+
+    public string[] canonicaHeaders =
+    {
+            "AntiguaField",
+            "DRAEXXIIIField",
+            "FormaCanonicaField",
+            "FrecuenciaField",
+            "IdCategoriaField",
+            "IdCategoriaGNField",
+            "IdFlexionField",
+            "MaxAcepcionesField",
+            "MaxEtimologiaField",
+            "NumAcepcionField",
+            "NumAcepcionSecField",
+            "NumEtimologiaField",
+            "PosAcepcionField",
+            "PosAcepcionSecField"
+        };
+}
+@functions{
+
+    protected override void OnInitialized()
+    {
+        reconocimientos = new List<Reconocimiento>();
+        info = new InfoCanonica();
+        _lematizador = new LematizadorService();
+        _conjugador = new ConjugadorService();
+        _selectedIndex = 0;
+    }
+
+    public async void SearchVerb(string verb)
+    {
+        if (verb == "") return;
+        reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
+        _selectedIndex = 0;
+        if (reconocimientos.Count > 0)
+        {
+            GetDataFromSelectedIndex(_selectedIndex);
+        }
+        else StateHasChanged();
+    }
+
+    public async void GetDataFromSelectedIndex(int index)
+    {
+        _selectedIndex = index;
+
+        //La manera de hacerlo todo en paralelo para reducir tiempos de espera fue sacada del siguiente enlace
+        //https://stackoverflow.com/questions/17197699/awaiting-multiple-tasks-with-different-results
+        Task<List<InfoConjugacion>> taskConjugaciones = _conjugador.GetInfoConjugacion(reconocimientos[_selectedIndex].IdFormaCanonica);
+        Task<InfoCanonica> taskCanonica = _lematizador.GetInfoCanonicaAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
+
+        await Task.WhenAll(taskConjugaciones, taskCanonica);
+
+        conjugaciones = await taskConjugaciones;
+        info = await taskCanonica;
+        //---
+        if(conjugaciones != null)
+            modoIndicativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 87).ToList(), "Indicativo");
+
+        StateHasChanged();
+    }
+
+    private ModoVerbo FormatearConjugaciones(List<InfoConjugacion> conjugacionesDelModo, string modo = "imperativo")
+    {
+        List<ConjugacionVerbo> listaConjugaciones = new List<ConjugacionVerbo>();
+        switch (modo)
+        {
+            case "Indicativo":
+                //presente
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion(
+                        new string[] { "Presente", "Presente" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 18).ToList(),
+                        new int[] { 10, 15 },
+                        new int[] { 16, 17 },
+                        18
+                    )
+                );
+                //preterito imperfecto o copreterito
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion(
+                        new string[] { "Pretérito imperfecto", "Copretérito" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 20 && conjugacion.IdFlexion <= 27).ToList(),
+                        new int[] { 20, 25 },
+                        new int[] { 26, 27 }
+                    )
+                );
+                //Pretérito perfecto simple o pretérito
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion(
+                        new string[] { "Pretérito perfecto simple", "Pretérito" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 30 && conjugacion.IdFlexion <= 37).ToList(),
+                        new int[] { 30, 35 },
+                        new int[] { 36, 37 }
+                    )
+                );
+                //Futuro simple
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion(
+                        new string[] { "Futuro simple", "Futuro" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 40 && conjugacion.IdFlexion <= 47).ToList(),
+                        new int[] { 40, 45 },
+                        new int[] { 46, 47 }
+                    )
+                );
+                //Condicional simple
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion(
+                        new string[] { "Condicional simple", "Pospretérito" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 50 && conjugacion.IdFlexion <= 57).ToList(),
+                        new int[] { 50, 55 },
+                        new int[] { 56, 57 }
+                    )
+                );
+                break;
+            case "Subjuntivo":
+                break;
+            default:
+                break;
+        }
+
+        ModoVerbo result = new ModoVerbo(modo, listaConjugaciones);
+        return result;
+    }
+
+    private ConjugacionVerbo GetConjugacionFromInfoConjugacion(
+        string[] nombreConjugacion,
+        List<InfoConjugacion> infoConjugaciones,
+        int[] espIndex,
+        int[] canIndex,
+        int indexVos = -1
+        )
+    {
+        ConjugacionVerbo conjugacion = new ConjugacionVerbo();
+
+        conjugacion.nombreConjugacion = nombreConjugacion;
+        infoConjugaciones.Sort((info1, info2) => info1.IdFlexion.CompareTo(info2.IdFlexion));
+        conjugacion.conjEsp = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).Select(infoConjugacion => infoConjugacion.Forma).ToList();
+        conjugacion.conjCan = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).Select(infoConjugacion => infoConjugacion.Forma).ToList();
+        conjugacion.conjFor = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).Select(infoConjugacion => infoConjugacion.Forma).ToList();
+        conjugacion.conjVos = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion == indexVos).Select(infoConjugacion => infoConjugacion.Forma).FirstOrDefault();
+
+        return conjugacion;
+    }
+}

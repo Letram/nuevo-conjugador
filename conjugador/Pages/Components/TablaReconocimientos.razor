@@ -1,0 +1,77 @@
+﻿@page "/table"
+
+@inherits Rec_Table_Controller
+@if (reconocimientos.Length > 0)
+{
+    <header>
+        <h1 class="uk-text-center">Conjugación del verbo <b>@reconocimientos[selectedIndex].FormaCanonica</b></h1>
+    </header>
+    <table class="uk-table">
+        <thead>
+            <tr>
+                @foreach (string header in reconocimientoHeaders)
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ConexionLematizador.Reconocimiento reconocimiento in reconocimientos)
+            {
+                <tr>
+                    <td>@reconocimiento.FormaCanonica.</td>
+                    <td>@reconocimiento.Frecuencia</td>
+                    <td>@reconocimiento.IdFlexion</td>
+                    <td>@reconocimiento.IdFormaCanonica</td>
+                    <td>@reconocimiento.Prefijos</td>
+                    <td>@reconocimiento.Pronombres</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <hr />
+    <table class="uk-table">
+        <thead>
+            <tr>
+                @foreach (string header in canonicaHeaders)
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ConexionLematizador.InfoCanonica infoCanonica in infoCanonicas)
+            {
+                <tr>
+                    <td>@infoCanonica.Antigua</td>
+                    <td>@infoCanonica.DRAEXXIII</td>
+                    <td>@infoCanonica.FormaCanonica</td>
+                    <td>@infoCanonica.Frecuencia</td>
+                    <td>@infoCanonica.IdCategoria</td>
+                    <td>@infoCanonica.IdCategoriaGN</td>
+                    <td>@infoCanonica.IdFlexion</td>
+                    <td>@infoCanonica.MaxAcepciones</td>
+                    <td>@infoCanonica.MaxEtimologia</td>
+                    <td>@infoCanonica.NumAcepcion</td>
+                    <td>@infoCanonica.NumAcepcionSec</td>
+                    <td>@infoCanonica.NumEtimologia</td>
+                    <td>@infoCanonica.PosAcepcion</td>
+                    <td>@infoCanonica.PosAcepcionSec</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}else{
+    <header>
+        <h1 class="uk-text-center">Introduzca en el servicio un verbo válido.</h1>
+    </header>
+}
+@code{
+
+    protected override void OnInitialized()
+    {
+        reconocimientos = reconocimientos ?? new ConexionLematizador.Reconocimiento[] { };
+        infoCanonicas = infoCanonicas ?? new ConexionLematizador.InfoCanonica[] { };
+        selectedIndex = 0;
+    }
+}

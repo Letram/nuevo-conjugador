@@ -165,165 +165,200 @@ else
 }
 @functions{
 
-        protected override void OnInitialized()
+    protected override void OnInitialized()
+    {
+        reconocimientos = new List<Reconocimiento>();
+        info = new InfoCanonica();
+        _lematizador = new LematizadorService();
+        _conjugador = new ConjugadorService();
+        _selectedIndex = 0;
+        selectedNotas = new List<int>();
+    }
+
+    public async void SearchVerb(string verb)
+    {
+        if (verb == "") return;
+        searchText = verb;
+        reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
+        _selectedIndex = 0;
+        if (reconocimientos.Count > 0)
         {
-            reconocimientos = new List<Reconocimiento>();
-            info = new InfoCanonica();
-            _lematizador = new LematizadorService();
-            _conjugador = new ConjugadorService();
-            _selectedIndex = 0;
-            selectedNotas = new List<int>();
+            GetDataFromSelectedIndex(_selectedIndex);
+        }
+        else StateHasChanged();
+    }
+
+    public async void GetDataFromSelectedIndex(int index)
+    {
+        _selectedIndex = index;
+
+        //La manera de hacerlo todo en paralelo para reducir tiempos de espera fue sacada del siguiente enlace
+        //https://stackoverflow.com/questions/17197699/awaiting-multiple-tasks-with-different-results
+        Task<List<InfoConjugacion>> taskConjugaciones = _conjugador.GetInfoConjugacion(reconocimientos[_selectedIndex].IdFormaCanonica);
+        Task<InfoCanonica> taskCanonica = _lematizador.GetInfoCanonicaAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
+        Task<List<string>> taskDefiniciones = _conjugador.GetDefinicionesAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
+
+        await Task.WhenAll(taskConjugaciones, taskCanonica, taskDefiniciones);
+
+        conjugaciones = await taskConjugaciones;
+        info = await taskCanonica;
+        List<string> definiciones = await taskDefiniciones;
+        //---
+
+        if (conjugaciones != null)
+        {
+            formasImpersonales = new String[3];
+            formasImpersonales[0] = conjugaciones[0].Forma; //inf
+            formasImpersonales[1] = conjugaciones[1].Forma; //par
+            formasImpersonales[2] = conjugaciones[2].Forma; //ger
+            modoIndicativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 57).ToList(), "Indicativo");
+            modoSubjuntivo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 60 && conjugacion.IdFlexion <= 87).ToList(), "Subjuntivo");
+            modoImperativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 90 && conjugacion.IdFlexion <= 98).ToList(), "Imperativo");
+            InfoConjugacion infinitivo = conjugaciones.Where(conjugacion => conjugacion.IdFlexion == 1).First();
+
+            notas = infinitivo.Notas;
         }
 
-        public async void SearchVerb(string verb)
+        StateHasChanged();
+    }
+
+    private ModoVerbo FormatearConjugaciones(List<InfoConjugacion> conjugacionesDelModo, string modo = "imperativo")
+    {
+        List<ConjugacionVerbo> listaConjugaciones = new List<ConjugacionVerbo>();
+        switch (modo)
         {
-            if (verb == "") return;
-            searchText = verb;
-            reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
-            _selectedIndex = 0;
-            if (reconocimientos.Count > 0)
-            {
-                GetDataFromSelectedIndex(_selectedIndex);
-            }
-            else StateHasChanged();
+            case "Indicativo":
+                //Presente
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Presente", "Presente" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 18).ToList(),
+                        new int[] { 10, 15 },
+                        new int[] { 16, 17 },
+                        18
+                    )
+                );
+                //Preterito imperfecto o copreterito
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Pretérito imperfecto", "Copretérito" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 20 && conjugacion.IdFlexion <= 27).ToList(),
+                        new int[] { 20, 25 },
+                        new int[] { 26, 27 }
+                    )
+                );
+                //Pretérito perfecto simple o pretérito
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Pretérito perfecto simple", "Pretérito" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 30 && conjugacion.IdFlexion <= 37).ToList(),
+                        new int[] { 30, 35 },
+                        new int[] { 36, 37 }
+                    )
+                );
+                //Futuro simple
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Futuro simple", "Futuro" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 40 && conjugacion.IdFlexion <= 47).ToList(),
+                        new int[] { 40, 45 },
+                        new int[] { 46, 47 }
+                    )
+                );
+                //Condicional simple
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Condicional simple", "Pospretérito" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 50 && conjugacion.IdFlexion <= 57).ToList(),
+                        new int[] { 50, 55 },
+                        new int[] { 56, 57 }
+                    )
+                );
+                break;
+            case "Subjuntivo":
+                //Presente subjuntivo
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Presente", "Presente" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 60 && conjugacion.IdFlexion <= 67).ToList(),
+                        new int[] { 60, 65 },
+                        new int[] { 66, 67 }
+                    )
+                );
+                //Pretérito imperfecto subjuntivo
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Pretérito imperfecto", "Pretérito" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 70 && conjugacion.IdFlexion <= 77).ToList(),
+                        new int[] { 70, 75 },
+                        new int[] { 76, 77 }
+                    )
+                );
+                //Futuro subjuntivo
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Futuro simple", "Futuro" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 80 && conjugacion.IdFlexion <= 87).ToList(),
+                        new int[] { 80, 85 },
+                        new int[] { 86, 87 }
+                    )
+                );
+                break;
+            default:
+                //Imperativo
+                listaConjugaciones.Add(
+                    GetConjugacionFromInfoConjugacion_2(
+                        new string[] { "Imperativo", "Imperativo" },
+                        conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 91 && conjugacion.IdFlexion <= 98).ToList(),
+                        new int[] { 90, 95 },
+                        new int[] { 96, 97 },
+                        98,
+                        true
+                    )
+                );
+                break;
         }
 
-        public async void GetDataFromSelectedIndex(int index)
-        {
-            _selectedIndex = index;
+        ModoVerbo result = new ModoVerbo(modo, listaConjugaciones);
+        return result;
+    }
 
-            //La manera de hacerlo todo en paralelo para reducir tiempos de espera fue sacada del siguiente enlace
-            //https://stackoverflow.com/questions/17197699/awaiting-multiple-tasks-with-different-results
-            Task<List<InfoConjugacion>> taskConjugaciones = _conjugador.GetInfoConjugacion(reconocimientos[_selectedIndex].IdFormaCanonica);
-            Task<InfoCanonica> taskCanonica = _lematizador.GetInfoCanonicaAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
-            Task<List<string>> taskDefiniciones = _conjugador.GetDefinicionesAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
+    //private ConjugacionVerbo GetConjugacionFromInfoConjugacion
+    //    (
+    //        string[] nombreConjugacion,
+    //        List<InfoConjugacion> infoConjugaciones,
+    //        int[] espIndex,
+    //        int[] canIndex,
+    //        int indexVos = -1,
+    //        bool incompleto = false
+    //    )
+    //{
+    //    ConjugacionVerbo conjugacion = new ConjugacionVerbo();
 
-            await Task.WhenAll(taskConjugaciones, taskCanonica, taskDefiniciones);
+    //    conjugacion.nombreConjugacion = nombreConjugacion;
+    //    infoConjugaciones.Sort((info1, info2) => info1.IdFlexion.CompareTo(info2.IdFlexion));
+    //    if (incompleto)
+    //    {
+    //        conjugacion.conjEsp = new List<InfoConjugacion>();
+    //        conjugacion.conjEsp.Add(new InfoConjugacion());
+    //        conjugacion.conjEsp.Add(infoConjugaciones[0]);
+    //        conjugacion.conjEsp.Add(new InfoConjugacion());
+    //        conjugacion.conjEsp.Add(infoConjugaciones[1]);
+    //        conjugacion.conjEsp.Add(infoConjugaciones[2]);
+    //        conjugacion.conjEsp.Add(new InfoConjugacion());
+    //    }
+    //    else
+    //    {
+    //        conjugacion.conjEsp = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).ToList();
+    //    }
+    //    conjugacion.conjCan = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).ToList();
+    //    conjugacion.conjFor = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).ToList();
+    //    conjugacion.conjVos = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion == indexVos).ToList();
 
-            conjugaciones = await taskConjugaciones;
-            info = await taskCanonica;
-            List<string> definiciones = await taskDefiniciones;
-            //---
+    //    return conjugacion;
+    //}
 
-            if (conjugaciones != null)
-            {
-                formasImpersonales = new String[3];
-                formasImpersonales[0] = conjugaciones[0].Forma; //inf
-                formasImpersonales[1] = conjugaciones[1].Forma; //par
-                formasImpersonales[2] = conjugaciones[2].Forma; //ger
-                modoIndicativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 57).ToList(), "Indicativo");
-                modoSubjuntivo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 60 && conjugacion.IdFlexion <= 87).ToList(), "Subjuntivo");
-                modoImperativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 91 && conjugacion.IdFlexion <= 98).ToList(), "Imperativo");
-                InfoConjugacion infinitivo = conjugaciones.Where(conjugacion => conjugacion.IdFlexion == 1).First();
-
-                notas = infinitivo.Notas;
-            }
-
-            StateHasChanged();
-        }
-
-        private ModoVerbo FormatearConjugaciones(List<InfoConjugacion> conjugacionesDelModo, string modo = "imperativo")
-        {
-            List<ConjugacionVerbo> listaConjugaciones = new List<ConjugacionVerbo>();
-            switch (modo)
-            {
-                case "Indicativo":
-                    //Presente
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Presente", "Presente" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 18).ToList(),
-                            new int[] { 10, 15 },
-                            new int[] { 16, 17 },
-                            18
-                        )
-                    );
-                    //Preterito imperfecto o copreterito
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Pretérito imperfecto", "Copretérito" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 20 && conjugacion.IdFlexion <= 27).ToList(),
-                            new int[] { 20, 25 },
-                            new int[] { 26, 27 }
-                        )
-                    );
-                    //Pretérito perfecto simple o pretérito
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Pretérito perfecto simple", "Pretérito" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 30 && conjugacion.IdFlexion <= 37).ToList(),
-                            new int[] { 30, 35 },
-                            new int[] { 36, 37 }
-                        )
-                    );
-                    //Futuro simple
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Futuro simple", "Futuro" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 40 && conjugacion.IdFlexion <= 47).ToList(),
-                            new int[] { 40, 45 },
-                            new int[] { 46, 47 }
-                        )
-                    );
-                    //Condicional simple
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Condicional simple", "Pospretérito" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 50 && conjugacion.IdFlexion <= 57).ToList(),
-                            new int[] { 50, 55 },
-                            new int[] { 56, 57 }
-                        )
-                    );
-                    break;
-                case "Subjuntivo":
-                    //Presente subjuntivo
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Presente", "Presente" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 60 && conjugacion.IdFlexion <= 67).ToList(),
-                            new int[] { 60, 65 },
-                            new int[] { 66, 67 }
-                        )
-                    );
-                    //Pretérito imperfecto subjuntivo
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Pretérito imperfecto", "Pretérito" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 70 && conjugacion.IdFlexion <= 77).ToList(),
-                            new int[] { 70, 75 },
-                            new int[] { 76, 77 }
-                        )
-                    );
-                    //Futuro subjuntivo
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Futuro simple", "Futuro" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 80 && conjugacion.IdFlexion <= 87).ToList(),
-                            new int[] { 80, 85 },
-                            new int[] { 86, 87 }
-                        )
-                    );
-                    break;
-                default:
-                    //Imperativo
-                    listaConjugaciones.Add(
-                        GetConjugacionFromInfoConjugacion(
-                            new string[] { "Imperativo", "Imperativo" },
-                            conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 91 && conjugacion.IdFlexion <= 98).ToList(),
-                            new int[] { 91, 96 },
-                            new int[] { 96, 97 },
-                            98,
-                            true
-                        )
-                    );
-                    break;
-            }
-
-            ModoVerbo result = new ModoVerbo(modo, listaConjugaciones);
-            return result;
-        }
-
-        private ConjugacionVerbo GetConjugacionFromInfoConjugacion
+    private ConjugacionVerbo GetConjugacionFromInfoConjugacion_2
             (
                 string[] nombreConjugacion,
                 List<InfoConjugacion> infoConjugaciones,
@@ -332,71 +367,49 @@ else
                 int indexVos = -1,
                 bool incompleto = false
             )
+    {
+        ConjugacionVerbo conjugacion = new ConjugacionVerbo();
+
+        conjugacion.nombreConjugacion = nombreConjugacion;
+        infoConjugaciones.Sort((info1, info2) => info1.IdFlexion.CompareTo(info2.IdFlexion));
+
+        conjugacion.conjEsp = new List<List<InfoConjugacion>>();
+        conjugacion.conjCan = new List<List<InfoConjugacion>>();
+        conjugacion.conjFor = new List<List<InfoConjugacion>>();
+        conjugacion.conjVos = new List<List<InfoConjugacion>>();
+
+        for (int i = espIndex[0]; i <= espIndex[1]; i++)
         {
-            ConjugacionVerbo conjugacion = new ConjugacionVerbo();
-
-            conjugacion.nombreConjugacion = nombreConjugacion;
-            infoConjugaciones.Sort((info1, info2) => info1.IdFlexion.CompareTo(info2.IdFlexion));
-            if (incompleto)
-            {
-                conjugacion.conjEsp = new List<InfoConjugacion>();
-                conjugacion.conjEsp.Add(new InfoConjugacion());
-                conjugacion.conjEsp.Add(infoConjugaciones[0]);
-                conjugacion.conjEsp.Add(new InfoConjugacion());
-                conjugacion.conjEsp.Add(infoConjugaciones[1]);
-                conjugacion.conjEsp.Add(infoConjugaciones[2]);
-                conjugacion.conjEsp.Add(new InfoConjugacion());
-            }
-            else
-            {
-                conjugacion.conjEsp = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).ToList();
-            }
-            conjugacion.conjCan = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).ToList();
-            conjugacion.conjFor = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).ToList();
-            conjugacion.conjVos = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion == indexVos).ToList();
-
-            return conjugacion;
+            conjugacion.conjEsp.Add(infoConjugaciones.Where(info => info.IdFlexion == i).ToList());
+            conjugacion.conjCan.Add(infoConjugaciones.Where(info => info.IdFlexion == i).ToList());
+            conjugacion.conjFor.Add(infoConjugaciones.Where(info => info.IdFlexion == i).ToList());
+            conjugacion.conjVos.Add(infoConjugaciones.Where(info => info.IdFlexion == i).ToList());
         }
 
-        //private ConjugacionVerbo GetConjugacionFromInfoConjugacion_2
-        //        (
-        //            string[] nombreConjugacion,
-        //            List<InfoConjugacion> infoConjugaciones,
-        //            int[] espIndex,
-        //            int[] canIndex,
-        //            int indexVos = -1,
-        //            bool incompleto = false
-        //        )
-        //{
-        //    ConjugacionVerbo conjugacion = new ConjugacionVerbo();
+        //modificacion del voseo (la segunda persona del singular => posicion 1; y la segunda persona del plural => posicion 2)
+        if (indexVos != -1)
+            conjugacion.conjVos[1] = infoConjugaciones.Where(info => info.IdFlexion == indexVos).ToList();
+        conjugacion.conjVos[4] = infoConjugaciones.Where(info => info.IdFlexion == espIndex[1]).ToList();
 
-        //    conjugacion.nombreConjugacion = nombreConjugacion;
-        //    infoConjugaciones.Sort((info1, info2) => info1.IdFlexion.CompareTo(info2.IdFlexion));
+        //modificacion del canario (la segunda persona del plural => posicion 4)
+        conjugacion.conjCan[4] = infoConjugaciones.Where(info => info.IdFlexion == canIndex[1]).ToList();
 
-        //    conjugacion.conjEsp = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).ToList();
-        //    conjugacion.conjCan = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).ToList();
-        //    conjugacion.conjFor = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).ToList();
-        //    conjugacion.conjVos = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).ToList();
+        //modificacion del formal (la segunda persona del singular => posicion 1; y la segunda persona del plural => posicion 4)
+        conjugacion.conjFor[1] = infoConjugaciones.Where(info => info.IdFlexion == canIndex[0]).ToList();
+        conjugacion.conjFor[4] = infoConjugaciones.Where(info => info.IdFlexion == canIndex[1]).ToList();
 
-        //    if (indexVos != -1)
-        //    {
-        //        conjugacion.conjVos[1] = infoConjugaciones.First(info => info.IdFlexion == indexVos);
-        //    }
-        //    conjugacion.conjVos[4] = infoConjugaciones.First(info => info.IdFlexion == espIndex[1]);
-
-
-        //    return conjugacion;
-        //}
-        private void ManageListOfNotes(int indexOfNotes)
+        return conjugacion;
+    }
+    private void ManageListOfNotes(int indexOfNotes)
+    {
+        int idNota = notas[indexOfNotes].IdNota;
+        if (selectedNotas.Contains(idNota))
         {
-            int idNota = notas[indexOfNotes].IdNota;
-            if (selectedNotas.Contains(idNota))
-            {
-                selectedNotas.Remove(idNota);
-            }
-            else
-            {
-                selectedNotas.Add(idNota);
-            }
+            selectedNotas.Remove(idNota);
         }
+        else
+        {
+            selectedNotas.Add(idNota);
+        }
+    }
 }

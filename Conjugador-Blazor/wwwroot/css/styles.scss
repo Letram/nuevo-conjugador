@@ -1,15 +1,17 @@
-#search_form{
-    h1{
+#search_form {
+    h1 {
         margin: 0;
     }
-    .form-container{
-        .input-container{
-            width:100%;
+
+    .form-container {
+        .input-container {
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            input{
+
+            input {
                 border: none;
                 border-bottom: 1px solid rgba(0,0,0,0.2);
                 width: 25%;
@@ -18,25 +20,27 @@
                 text-align: center;
                 transition: 0.5s ease-in-out;
 
-                &:focus{
+                &:focus {
                     width: 80%;
                     border-bottom: 2px solid black;
                     border-top: 1px solid black;
                 }
             }
-            &:before{
-                content:"";
+
+            &:before {
+                content: "";
                 position: relative;
-                width: 0; 
-                height: 0; 
+                width: 0;
+                height: 0;
                 border-top: 0.5rem solid transparent;
                 border-bottom: 0.5rem solid transparent;
                 border-left: 1rem solid black;
             }
-            &:after{
-                content:"";
-                width: 0; 
-                height: 0; 
+
+            &:after {
+                content: "";
+                width: 0;
+                height: 0;
                 border-top: 0.5rem solid transparent;
                 border-bottom: 0.5rem solid transparent;
                 border-right: 1rem solid black;
@@ -45,10 +49,10 @@
     }
 }
 
-#verb_name{
-    h1{
-        b{
-            &:first-letter{
+#verb_name {
+    h1 {
+        b {
+            &:first-letter {
                 text-transform: capitalize;
             }
         }
@@ -75,112 +79,162 @@
     }
 }
 
-#data_container{
-    #verb_acknowledgements{
-        li > p::first-letter{
+#data_container {
+    #verb_acknowledgements {
+        li > p::first-letter {
             text-transform: capitalize;
         }
     }
 
-    .card-heading{
-        .close-btn{
+    .card-heading {
+        .close-btn {
             padding: 0.1rem 0.25rem;
             transition: 0.5s;
-            &:hover{
+
+            &:hover {
                 background-color: rgb(247,247,247);
             }
         }
-        h3{
+
+        h3 {
             margin-bottom: 0;
         }
     }
-    
-    .uk-card{
+
+    .uk-card {
         padding: 1rem 0.5rem 1rem 0.5rem;
-        .card-heading{
+
+        .card-heading {
             padding-bottom: 0.5rem;
         }
-        .verb_tense{
-            .custom-badge{
+
+        .verb_tense {
+            .custom-badge {
                 top: 2%;
                 right: 2%;
             }
-            .uk-card-title{
+
+            .uk-card-title {
                 margin-bottom: 0.1rem;
             }
-            .uk-text-meta{
+
+            .uk-text-meta {
                 margin-bottom: 0.1rem;
             }
-            hr{
+
+            hr {
                 margin: 0.2rem 0 1.5rem 0;
             }
-            .tense{
-                p{
+
+            .tense {
+                p {
                     margin-block-start: 0.5rem;
                     margin-block-end: 0.5rem;
+                    transition: 0.5s;
                     //Para los indicativos e imperativos
-                    span{
+                    span:first-of-type {
                         text-transform: capitalize;
                         font-weight: bold;
                     }
-                    span[data-subjunctive], span[data-imperative]{
-                        text-transform: lowercase;
+
+                    span[data-subjunctive], span[data-imperative] {
+                        text-transform: lowercase !important;
                         font-weight: bold;
+                    }
+
+                    &.hasNote {
+                        position: relative;
+                        font-weight: bold;
+                        color: #f0506e;
+
+                        &:after {
+                            content: "";
+                            width: 0;
+                            height: 0;
+                            border-top: 0.5rem solid transparent;
+                            border-bottom: 0.5rem solid transparent;
+                            border-right: 0.75rem solid #f0506e;
+                            position: absolute;
+                            right: 0;
+                        }
                     }
                 }
             }
         }
     }
 
-    .notes{
-        label{
+    .notes {
+        label {
             display: block;
             padding: 0.2rem 0;
         }
     }
 
-    ul.js-filter{
+    .impersonal {
+        ul {
+            li > p::first-letter {
+                text-transform: capitalize;
+            }
+        }
+    }
+
+    #impersonal_simple {
+        p {
+            &:first-letter {
+                text-transform: capitalize;
+            }
+        }
+    }
+
+    ul.js-filter {
         list-style: none;
         padding: 0;
-        .tense-container{
-            .uk-card{
+
+        .tense-container {
+            .uk-card {
                 padding-top: 2rem;
             }
         }
     }
-    .uk-nav{
-        li{
-            a{
+
+    .uk-nav {
+        li {
+            a {
                 padding: 0.25rem !important;
                 transition: 0.25s;
             }
         }
-        .uk-active{
+
+        .uk-active {
             position: relative;
             border-left: 2px solid black;
-            a{
+
+            a {
                 transform: translateX(10%);
             }
         }
     }
-    
+
     .uk-subnav-pill {
-        .uk-active{
-            a{
+        .uk-active {
+            a {
                 background-color: black;
             }
-            &[data-color="green"]{
-                a{
+
+            &[data-color="green"] {
+                a {
                     background-color: #32d296
                 }
             }
-            &[data-color="blue"]{
-                a{
+
+            &[data-color="blue"] {
+                a {
                     background-color: #1e87f0
                 }
             }
-            &[data-color="red"]{
-                a{
+
+            &[data-color="red"] {
+                a {
                     background-color: #f0506e
                 }
             }

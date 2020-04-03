@@ -380,8 +380,8 @@ namespace ConexionLematizador
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="InfoFlexion", Namespace="http://schemas.datacontract.org/2004/07/ServicioLematizacionWCF")]
-    public partial class InfoFlexion : object
+    [System.Runtime.Serialization.DataContractAttribute(Name="InfoFlexionador", Namespace="http://schemas.datacontract.org/2004/07/ServicioLematizacionWCF")]
+    public partial class InfoFlexionador : object
     {
         
         private int IdFlexionField;
@@ -482,6 +482,357 @@ namespace ConexionLematizador
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InfoPrimitiva", Namespace="http://schemas.datacontract.org/2004/07/ServicioLematizacionWCF")]
+    public partial class InfoPrimitiva : object
+    {
+        
+        private int IdCategoriaField;
+        
+        private int IdCategoriaPadreField;
+        
+        private int IdFamiliaField;
+        
+        private int IdPrefijoField;
+        
+        private int IdSufijoField;
+        
+        private string PadreField;
+        
+        private string PrefijoField;
+        
+        private bool ReglaPrefijalField;
+        
+        private bool ReglaSufijalField;
+        
+        private string SufijoField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IdCategoria
+        {
+            get
+            {
+                return this.IdCategoriaField;
+            }
+            set
+            {
+                this.IdCategoriaField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IdCategoriaPadre
+        {
+            get
+            {
+                return this.IdCategoriaPadreField;
+            }
+            set
+            {
+                this.IdCategoriaPadreField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IdFamilia
+        {
+            get
+            {
+                return this.IdFamiliaField;
+            }
+            set
+            {
+                this.IdFamiliaField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IdPrefijo
+        {
+            get
+            {
+                return this.IdPrefijoField;
+            }
+            set
+            {
+                this.IdPrefijoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IdSufijo
+        {
+            get
+            {
+                return this.IdSufijoField;
+            }
+            set
+            {
+                this.IdSufijoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Padre
+        {
+            get
+            {
+                return this.PadreField;
+            }
+            set
+            {
+                this.PadreField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Prefijo
+        {
+            get
+            {
+                return this.PrefijoField;
+            }
+            set
+            {
+                this.PrefijoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool ReglaPrefijal
+        {
+            get
+            {
+                return this.ReglaPrefijalField;
+            }
+            set
+            {
+                this.ReglaPrefijalField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool ReglaSufijal
+        {
+            get
+            {
+                return this.ReglaSufijalField;
+            }
+            set
+            {
+                this.ReglaSufijalField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Sufijo
+        {
+            get
+            {
+                return this.SufijoField;
+            }
+            set
+            {
+                this.SufijoField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InfoPrefijo", Namespace="http://schemas.datacontract.org/2004/07/ServicioLematizacionWCF")]
+    public partial class InfoPrefijo : object
+    {
+        
+        private int CorteField;
+        
+        private string EtimologiaField;
+        
+        private string PrefijoField;
+        
+        private string PrefijoCanonicoField;
+        
+        private string SignificadoField;
+        
+        private string SilabacionField;
+        
+        private string TipoPrefijoField;
+        
+        private string VariantesField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Corte
+        {
+            get
+            {
+                return this.CorteField;
+            }
+            set
+            {
+                this.CorteField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Etimologia
+        {
+            get
+            {
+                return this.EtimologiaField;
+            }
+            set
+            {
+                this.EtimologiaField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Prefijo
+        {
+            get
+            {
+                return this.PrefijoField;
+            }
+            set
+            {
+                this.PrefijoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PrefijoCanonico
+        {
+            get
+            {
+                return this.PrefijoCanonicoField;
+            }
+            set
+            {
+                this.PrefijoCanonicoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Significado
+        {
+            get
+            {
+                return this.SignificadoField;
+            }
+            set
+            {
+                this.SignificadoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Silabacion
+        {
+            get
+            {
+                return this.SilabacionField;
+            }
+            set
+            {
+                this.SilabacionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string TipoPrefijo
+        {
+            get
+            {
+                return this.TipoPrefijoField;
+            }
+            set
+            {
+                this.TipoPrefijoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Variantes
+        {
+            get
+            {
+                return this.VariantesField;
+            }
+            set
+            {
+                this.VariantesField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InfoFlexion", Namespace="http://schemas.datacontract.org/2004/07/ServicioLematizacionWCF")]
+    public partial class InfoFlexion : object
+    {
+        
+        private string FlexionAbrevEnField;
+        
+        private string FlexionAbrevEsField;
+        
+        private string FlexionEnField;
+        
+        private string FlexionEsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string FlexionAbrevEn
+        {
+            get
+            {
+                return this.FlexionAbrevEnField;
+            }
+            set
+            {
+                this.FlexionAbrevEnField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string FlexionAbrevEs
+        {
+            get
+            {
+                return this.FlexionAbrevEsField;
+            }
+            set
+            {
+                this.FlexionAbrevEsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string FlexionEn
+        {
+            get
+            {
+                return this.FlexionEnField;
+            }
+            set
+            {
+                this.FlexionEnField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string FlexionEs
+        {
+            get
+            {
+                return this.FlexionEsField;
+            }
+            set
+            {
+                this.FlexionEsField = value;
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ConexionLematizador.IServicioLematizacion")]
     public interface IServicioLematizacion
@@ -493,6 +844,9 @@ namespace ConexionLematizador
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/Reconocer", ReplyAction="http://tempuri.org/IServicioLematizacion/ReconocerResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.Reconocimiento>> ReconocerAsync(string palabra, string idioma, bool multiPref);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ReconocerFlexible", ReplyAction="http://tempuri.org/IServicioLematizacion/ReconocerFlexibleResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.Reconocimiento>> ReconocerFlexibleAsync(string palabra, string idioma, bool multiPref);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ReconocerVerbo", ReplyAction="http://tempuri.org/IServicioLematizacion/ReconocerVerboResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.Reconocimiento>> ReconocerVerboAsync(string verbo, string idioma, bool multiPref);
         
@@ -502,11 +856,23 @@ namespace ConexionLematizador
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaPalabra", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaPalabraResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoPalabra>> ConsultaPalabraAsync(string palabra);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaFlexiones", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaFlexionesResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoFlexion>> ConsultaFlexionesAsync(int idFormaCanonica);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaFlexionador", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaFlexionadorResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoFlexionador>> ConsultaFlexionadorAsync(int idFormaCanonica);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaVerbo", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaVerboResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoVerbo>> ConsultaVerboAsync(string verbo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaPrimitiva", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaPrimitivaResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoPrimitiva>> ConsultaPrimitivaAsync(string palabra);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaPrefijo", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaPrefijoResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoPrefijo>> ConsultaPrefijoAsync(string prefijo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaPrefijoCod", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaPrefijoCodResponse")]
+        System.Threading.Tasks.Task<ConexionLematizador.InfoPrefijo> ConsultaPrefijoCodAsync(int idPrefijo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioLematizacion/ConsultaFlexion", ReplyAction="http://tempuri.org/IServicioLematizacion/ConsultaFlexionResponse")]
+        System.Threading.Tasks.Task<ConexionLematizador.InfoFlexion> ConsultaFlexionAsync(int idFlexion);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
@@ -562,6 +928,11 @@ namespace ConexionLematizador
             return base.Channel.ReconocerAsync(palabra, idioma, multiPref);
         }
         
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.Reconocimiento>> ReconocerFlexibleAsync(string palabra, string idioma, bool multiPref)
+        {
+            return base.Channel.ReconocerFlexibleAsync(palabra, idioma, multiPref);
+        }
+        
         public System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.Reconocimiento>> ReconocerVerboAsync(string verbo, string idioma, bool multiPref)
         {
             return base.Channel.ReconocerVerboAsync(verbo, idioma, multiPref);
@@ -577,14 +948,34 @@ namespace ConexionLematizador
             return base.Channel.ConsultaPalabraAsync(palabra);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoFlexion>> ConsultaFlexionesAsync(int idFormaCanonica)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoFlexionador>> ConsultaFlexionadorAsync(int idFormaCanonica)
         {
-            return base.Channel.ConsultaFlexionesAsync(idFormaCanonica);
+            return base.Channel.ConsultaFlexionadorAsync(idFormaCanonica);
         }
         
         public System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoVerbo>> ConsultaVerboAsync(string verbo)
         {
             return base.Channel.ConsultaVerboAsync(verbo);
+        }
+        
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoPrimitiva>> ConsultaPrimitivaAsync(string palabra)
+        {
+            return base.Channel.ConsultaPrimitivaAsync(palabra);
+        }
+        
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConexionLematizador.InfoPrefijo>> ConsultaPrefijoAsync(string prefijo)
+        {
+            return base.Channel.ConsultaPrefijoAsync(prefijo);
+        }
+        
+        public System.Threading.Tasks.Task<ConexionLematizador.InfoPrefijo> ConsultaPrefijoCodAsync(int idPrefijo)
+        {
+            return base.Channel.ConsultaPrefijoCodAsync(idPrefijo);
+        }
+        
+        public System.Threading.Tasks.Task<ConexionLematizador.InfoFlexion> ConsultaFlexionAsync(int idFlexion)
+        {
+            return base.Channel.ConsultaFlexionAsync(idFlexion);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

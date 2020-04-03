@@ -1,4 +1,20 @@
 ﻿@using Data
+@using ConexionConjugador
+ 
+    <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" style="justify-content: center;">
+        <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="negar" @onchange="e => opciones[0] = !opciones[0]">Negar la conjugación</label>
+        <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="femenino" @onchange="e => opciones[1] = !opciones[1]">Sujeto femenino</label>
+        <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="pronominal" @onchange="e => opciones[2] = !opciones[2]">Pronominal</label>
+        <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="frecuencia" @onchange="e => opciones[3] = !opciones[3]">Frecuencia en el CREA</label>
+    </div>
+<FormasImpersonales formasImpersonales="formasImpersonales" negar="opciones[0]"></FormasImpersonales>
+
+<div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" style="justify-content: center;">
+    <label><input class="uk-radio" type="radio" name="spanish_dialect" checked>España</label>
+    <label><input class="uk-radio" type="radio" name="spanish_dialect">Río de la Plata (voseo)</label>
+    <label><input class="uk-radio" type="radio" name="spanish_dialect">Canarias (ustedes)</label>
+    <label><input class="uk-radio" type="radio" name="spanish_dialect">Tratamiento formal, de respeto o cortesía</label>
+</div>
 
 <div id="simple_times_card" class="uk-card uk-card-default uk-card-body">
     <div class="uk-flex uk-flex-between card-heading">
@@ -24,46 +40,70 @@
             </ul>
             <ul class="js-filter">
                 <li data-time="indicativo">
-                        @if (indicativo != null && indicativo.conjugaciones.Count > 0)
+                    @if (indicativo != null)
+                    {
+                        <div id="simple_times_indicative" class="uk-grid-match uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-small" uk-grid>
+                            @foreach (ConjugacionVerbo conjugacion in indicativo.conjugaciones)
+                            {
+                                <TiempoVerbal conjugacion="conjugacion" modo="0" notasSeleccionadas="notasSeleccionadas" opciones="opciones" sujetos="sujetos"></TiempoVerbal>
+                            }
+                        </div>
+                    }
+                </li>
+                <hr />
+                <li data-time="subjuntivo">
+                    @if (subjuntivo != null)
+                    {
+                    <div id="simple_times_subjunctive" class="uk-grid-match uk-grid-small" uk-grid>
+                        @foreach (ConjugacionVerbo conjugacion in subjuntivo.conjugaciones)
                         {
-                            <div id="simple_times_indicative" class="uk-grid-match uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-small uk-grid-divider" uk-grid>
-                                @foreach (ConjugacionVerbo conjugacion in indicativo.conjugaciones)
-                                {
-                                    <div class="tense-container">
-                                        <div class="uk-card uk-card-default uk-card-body">
-                                            <div class="verb_tense">
-                                                <div class="uk-card-badge uk-label uk-label-success custom-badge">Indicativo</div>
-                                                <h3 class="uk-card-title">
-                                                    @conjugacion.nombreConjugacion[0]
-                                                </h3>
-                                                <p class="uk-text-meta uk-margin-remove-top additional_info">@conjugacion.nombreConjugacion[1]</p>
-                                                <hr>
-                                                <div class="tense">
-                                                    <p>
-                                                        <span>yo</span> @conjugacion.conjEsp[0]
-                                                    </p>
-                                                    <p>
-                                                        <span>tú</span> @conjugacion.conjEsp[1]
-                                                    </p>
-                                                    <p>
-                                                        <span>él</span> @conjugacion.conjEsp[2]
-                                                    </p>
-                                                    <p>
-                                                        <span>nosotros</span> @conjugacion.conjEsp[3]
-                                                    </p>
-                                                    <p>
-                                                        <span>vosotros</span> @conjugacion.conjEsp[4]
-                                                    </p>
-                                                    <p>
-                                                        <span>ellos</span> @conjugacion.conjEsp[5]
-                                                    </p>
-                                                </div>
+                            <TiempoVerbal conjugacion="conjugacion" modo="1" notasSeleccionadas="notasSeleccionadas" opciones="opciones" sujetos="sujetos"></TiempoVerbal>
+                        }
+                    </div>
+                    }
+                </li>
+                <hr />
+                <li data-time="imperativo">
+                    @if (imperativo != null)
+                    {
+                        <div id="simple_times_imperative" class="uk-grid-match uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-small" uk-grid>
+                            @foreach (ConjugacionVerbo conjugacion in imperativo.conjugaciones)
+                            {
+                                <div class="tense-container">
+                                    <div class="uk-card uk-card-default uk-card-body">
+                                        <div class="verb_tense">
+                                            <div class="uk-card-badge uk-label uk-label-danger custom-badge">Imperativo</div>
+                                            <h3 class="uk-card-title">
+                                                @conjugacion.nombreConjugacion[0]
+                                            </h3>
+                                            <p class="uk-text-meta uk-margin-remove-top additional_info">@conjugacion.nombreConjugacion[1]</p>
+                                            <hr>
+                                            <div class="tense">
+                                                <p>
+                                                    -
+                                                </p>
+                                                <p class="@(conjugacion.conjEsp[1].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[1].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )" >
+                                                    @conjugacion.conjEsp[1].Forma <span data-imperative>tú</span>
+                                                </p>
+                                                <p>
+                                                    -
+                                                </p>
+                                                <p class="@(conjugacion.conjEsp[3].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[3].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                                                    @conjugacion.conjEsp[3].Forma <span data-imperative>nosotros</span>
+                                                </p>
+                                                <p class="@(conjugacion.conjEsp[4].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[4].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                                                    @conjugacion.conjEsp[4].Forma <span data-imperative>vosotros</span>
+                                                </p>
+                                                <p>
+                                                    -
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
-                                }
-                            </div>
-                        }
+                                </div>
+                            }
+                        </div>
+                    }
                 </li>
             </ul>
         </div>
@@ -72,9 +112,25 @@
 
 @code {
     [Parameter] public ModoVerbo indicativo { get; set; }
+    [Parameter] public ModoVerbo subjuntivo { get; set; }
+    [Parameter] public ModoVerbo imperativo { get; set; }
+    [Parameter] public string[] formasImpersonales { get; set; }
+    [Parameter] public List<int> notasSeleccionadas { get; set; }
+    private bool[] opciones { get; set; } //negar conjugación, femenino, pronominal, frecuencia en el CREA
+    [Parameter] public int modo { get; set; } = 0; //0 => español, 1 => voseo, 2 => canario, 3 => formal
+    public string[] sujetos = new String[]
+    {
+        "yo", "tú", "él", "nosotros", "vosotros", "ellos"
+    };
 }
 
 @functions{
-    protected override void OnInitialized(){
+    protected override void OnInitialized()
+    {
+        opciones = new bool[] { false, false, false, false };
+    }
+
+    private void ManageListOfOptions(int index) {
+        opciones[index] = !opciones[index];
     }
 }

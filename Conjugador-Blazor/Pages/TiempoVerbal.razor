@@ -1,0 +1,93 @@
+﻿@using Data
+
+<div class="tense-container @(conjugacion.conjEsp.Count > 6 ? "uk-width-2-3@m uk-width-1-2@s" : "uk-width-1-3@m uk-width-1-2@s")">
+    <div class="uk-card uk-card-default uk-card-body">
+        <div class="verb_tense">
+            <div class="uk-card-badge uk-label @badgeClass[modo] custom-badge">@modos[modo]</div>
+            <h3 class="uk-card-title">
+                @conjugacion.nombreConjugacion[0]
+            </h3>
+            <p class="uk-text-meta uk-margin-remove-top additional_info">@conjugacion.nombreConjugacion[1]</p>
+            <hr>
+            @if (conjugacion.conjEsp.Count > 6)
+            {
+                <div class="tense uk-grid-divider uk-child-width-expand" uk-grid>
+                    <div>
+                        <p class="@(conjugacion.conjEsp[0].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[0].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[0]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[0].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[2].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[2].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[1]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[2].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[4].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[4].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[2]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[4].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[6].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[6].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[3]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[6].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[8].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[8].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[4]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[8].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[10].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[10].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[5]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[10].Forma
+                        </p>
+                    </div>
+                    <div>
+                        <p class="@(conjugacion.conjEsp[1].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[1].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[0]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[1].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[3].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[3].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[1]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[3].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[5].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[5].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[2]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[5].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[7].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[7].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[3]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[7].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[9].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[9].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[4]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[9].Forma
+                        </p>
+                        <p class="@(conjugacion.conjEsp[11].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[11].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                            ... que <span data-subjunctive>@sujetos[5]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[11].Forma
+                        </p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="tense">
+                    <p class="@(conjugacion.conjEsp[0].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[0].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                        ... que <span data-subjunctive>@sujetos[0]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[0].Forma
+                    </p>
+                    <p class="@(conjugacion.conjEsp[1].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[1].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                        ... que <span data-subjunctive>@sujetos[1]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[1].Forma
+                    </p>
+                    <p class="@(conjugacion.conjEsp[2].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[2].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                        ... que <span data-subjunctive>@sujetos[2]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[2].Forma
+                    </p>
+                    <p class="@(conjugacion.conjEsp[3].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[3].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                        ... que <span data-subjunctive>@sujetos[3]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[3].Forma
+                    </p>
+                    <p class="@(conjugacion.conjEsp[4].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[4].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                        ... que <span data-subjunctive>@sujetos[4]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @conjugacion.conjEsp[4].Forma
+                    </p>
+                    <p class="@(conjugacion.conjEsp[5].IdNotas != null ? (notasSeleccionadas.Any(nota => conjugacion.conjEsp[5].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
+                        ... que <span data-subjunctive>@sujetos[5]</span> @conjugacion.conjEsp[5].Forma
+                    </p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter] public string[] sujetos { get; set; }
+    [Parameter] public int modo { get; set; } //1 => indicativo, 2 => subjuntivo, 3 => imperativo
+    [Parameter] public ConjugacionVerbo conjugacion { get; set; }
+    [Parameter] public bool[] opciones { get; set; }
+    [Parameter] public List<int> notasSeleccionadas { get; set; }
+    private string[] modos = { "Indicativo", "Subjuntivo", "Imperativo" };
+    private string[] badgeClass = { "uk-label-success", "uk-label-primary", "uk-label-danger" };
+}
+@functions{}

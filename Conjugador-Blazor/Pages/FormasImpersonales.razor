@@ -1,78 +1,93 @@
-﻿<div class="uk-child-width-expand@s uk-grid-match" uk-grid>
-    <div>
-        <div id="impersonal_simple_card" class="uk-card uk-card-default uk-card-body">
-            <div class="uk-flex uk-flex-between card-heading">
-                <h3 class="uk-card-title">
-                    Forma impersonal
-                </h3>
-                <div>
-                    <button class="uk-button uk-button-text close-btn"
-                            uk-toggle="target: #verb_impersonal_simple; animation: uk-animation-fade"
-                            type="button"
-                            onclick="toggle()">
-                        Less
-                    </button>
+﻿@if (formasImpersonales != null)
+{
+    <div class="uk-child-width-expand@s uk-grid-match" uk-grid>
+        <div>
+            <div id="impersonal_simple_card" class="uk-card uk-card-default uk-card-body">
+                <div class="uk-flex uk-flex-between card-heading">
+                    <h3 class="uk-card-title">
+                        Forma impersonal
+                    </h3>
+                    <div>
+                        <button class="uk-button uk-button-text close-btn"
+                                uk-toggle="target: #verb_impersonal_simple; animation: uk-animation-fade"
+                                type="button"
+                                onclick="toggle()">
+                            Less
+                        </button>
+                    </div>
+                </div>
+                <div class="uk-grid-divider impersonal" uk-grid>
+                    <div class="uk-width-small">
+                        <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_simple">
+                            <li class="uk-active"><a href="#">Infinitivo</a></li>
+                            <li><a href="#">Gerundio</a></li>
+                            <li><a href="#">Participio</a></li>
+                        </ul>
+                    </div>
+                    <div class="uk-with-expand">
+                        <ul id="impersonal_simple" class="uk-switcher">
+                            <li>
+                                <p>
+                                    @(negar ? "no " + formasImpersonales[0] : formasImpersonales[0])
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    @(negar ? "no " + formasImpersonales[2] : formasImpersonales[2])
+                                </p>
+                            </li>
+                            <li>
+                                <div>
+                                    <ul class="uk-list">
+                                        @{
+                                            string participioAux = formasImpersonales[1].Substring(0, formasImpersonales[1].Length - 1);
+                                            <li><p>@(negar ? "no " + participioAux + "o" : participioAux + "o")</p></li>
+                                            <li><p>@(negar ? "no " + participioAux + "a" : participioAux + "a")</p></li>
+                                            <li><p>@(negar ? "no " + participioAux + "os" : participioAux + "os")</p></li>
+                                            <li><p>@(negar ? "no " + participioAux + "as" : participioAux + "as")</p></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div id="verb_impersonal_simple" class="uk-grid-divider" uk-grid>
-                <div class="uk-width-small">
-                    <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_simple">
-                        <li class="uk-active"><a href="#">Infinitivo</a></li>
-                        <li><a href="#">Gerundio</a></li>
-                        <li><a href="#">Participio</a></li>
-                    </ul>
+        </div>
+        <div>
+            <div id="impersonal_compound_card" class="uk-card uk-card-default uk-card-body">
+                <div class="uk-flex uk-flex-between card-heading">
+                    <h3 class="uk-card-title">
+                        Forma impersonal compuesta
+                    </h3>
+                    <div>
+                        <button class="uk-button uk-button-text close-btn"
+                                uk-toggle="target: #verb_impersonal_compound; animation: uk-animation-fade"
+                                type="button"
+                                onclick="toggle()">
+                            Less
+                        </button>
+                    </div>
                 </div>
-                <div class="uk-with-expand">
-                    <ul id="impersonal_simple" class="uk-switcher">
-                        <li>Ambientalizar</li>
-                        <li>Ambientalizando</li>
-                        <li>
-                            <div>
-                                <ul class="uk-list">
-                                    <li>Ambientalizado</li>
-                                    <li>Ambientalizada</li>
-                                    <li>Ambientalizados</li>
-                                    <li>Ambientalizadas</li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
+                <div id="verb_impersonal_compound" class="uk-grid-divider impersonal" uk-grid>
+                    <div class="uk-width-small">
+                        <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_compound">
+                            <li class="uk-active"><a href="#">Infinitivo compuesto</a></li>
+                            <li><a href="#">Gerundio compuesto</a></li>
+                        </ul>
+                    </div>
+                    <div class="uk-with-expand">
+                        <ul id="impersonal_compound" class="uk-switcher">
+                            <li><p>@(negar ? "no haber " + formasImpersonales[1] : "haber "+ formasImpersonales[1])</p></li>
+                            <li><p>@(negar ? "no habiendo " + formasImpersonales[1] : "habiendo "+ formasImpersonales[1])</p></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div>
-        <div id="impersonal_compound_card" class="uk-card uk-card-default uk-card-body">
-            <div class="uk-flex uk-flex-between card-heading">
-                <h3 class="uk-card-title">
-                    Forma impersonal compuesta
-                </h3>
-                <div>
-                    <button class="uk-button uk-button-text close-btn"
-                            uk-toggle="target: #verb_impersonal_compound; animation: uk-animation-fade"
-                            type="button"
-                            onclick="toggle()">
-                        Less
-                    </button>
-                </div>
-            </div>
-            <div id="verb_impersonal_compound" class="uk-grid-divider" uk-grid>
-                <div class="uk-width-small">
-                    <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_compound">
-                        <li class="uk-active"><a href="#">Infinitivo compuesto</a></li>
-                        <li><a href="#">Gerundio compuesto</a></li>
-                    </ul>
-                </div>
-                <div class="uk-with-expand">
-                    <ul id="impersonal_compound" class="uk-switcher">
-                        <li>Haber ambientalizado</li>
-                        <li>Habiendo ambientalizado</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+}
 @code {
-
+    [Parameter] public string[] formasImpersonales { get; set; }
+    [Parameter] public bool negar { get; set; }
 }

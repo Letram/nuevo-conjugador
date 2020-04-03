@@ -9,7 +9,7 @@ namespace Conjugador_Blazor.Services
     {
         public async Task<List<string>> GetSugerenciasAsync(string verb)
         {
-            SpellerServiceClient client = new SpellerServiceClient(SpellerServiceClient.EndpointConfiguration.BasicHttpsBinding_ISpellerService);
+            ServicioSpellerClient client = new ServicioSpellerClient(ServicioSpellerClient.EndpointConfiguration.BasicHttpsBinding_IServicioSpeller);
 
             List<string> sugerencias = await client.SugerenciasAsync(verb, true);
 
@@ -20,7 +20,7 @@ namespace Conjugador_Blazor.Services
 
         public async Task<List<string>> GetSimilaresAsync(string verb)
         {
-            SpellerServiceClient client = new SpellerServiceClient(SpellerServiceClient.EndpointConfiguration.BasicHttpsBinding_ISpellerService);
+            ServicioSpellerClient client = new ServicioSpellerClient(ServicioSpellerClient.EndpointConfiguration.BasicHttpsBinding_IServicioSpeller);
 
             List<string> similitudes = await client.SimilaresAsync(verb);
 

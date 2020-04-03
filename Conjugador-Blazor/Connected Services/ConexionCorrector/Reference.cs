@@ -12,25 +12,25 @@ namespace ConexionCorrector
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ConexionCorrector.ISpellerService")]
-    public interface ISpellerService
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ConexionCorrector.IServicioSpeller")]
+    public interface IServicioSpeller
     {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISpellerService/Sugerencias", ReplyAction="http://tempuri.org/ISpellerService/SugerenciasResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioSpeller/Sugerencias", ReplyAction="http://tempuri.org/IServicioSpeller/SugerenciasResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<string>> SugerenciasAsync(string palabra, bool soloVerbos);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ISpellerService/Similares", ReplyAction="http://tempuri.org/ISpellerService/SimilaresResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioSpeller/Similares", ReplyAction="http://tempuri.org/IServicioSpeller/SimilaresResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.List<string>> SimilaresAsync(string palabra);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    public interface ISpellerServiceChannel : ConexionCorrector.ISpellerService, System.ServiceModel.IClientChannel
+    public interface IServicioSpellerChannel : ConexionCorrector.IServicioSpeller, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    public partial class SpellerServiceClient : System.ServiceModel.ClientBase<ConexionCorrector.ISpellerService>, ConexionCorrector.ISpellerService
+    public partial class ServicioSpellerClient : System.ServiceModel.ClientBase<ConexionCorrector.IServicioSpeller>, ConexionCorrector.IServicioSpeller
     {
         
         /// <summary>
@@ -40,28 +40,28 @@ namespace ConexionCorrector
         /// <param name="clientCredentials">Credenciales de cliente</param>
         static partial void ConfigureEndpoint(System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Description.ClientCredentials clientCredentials);
         
-        public SpellerServiceClient(EndpointConfiguration endpointConfiguration) : 
-                base(SpellerServiceClient.GetBindingForEndpoint(endpointConfiguration), SpellerServiceClient.GetEndpointAddress(endpointConfiguration))
+        public ServicioSpellerClient(EndpointConfiguration endpointConfiguration) : 
+                base(ServicioSpellerClient.GetBindingForEndpoint(endpointConfiguration), ServicioSpellerClient.GetEndpointAddress(endpointConfiguration))
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public SpellerServiceClient(EndpointConfiguration endpointConfiguration, string remoteAddress) : 
-                base(SpellerServiceClient.GetBindingForEndpoint(endpointConfiguration), new System.ServiceModel.EndpointAddress(remoteAddress))
+        public ServicioSpellerClient(EndpointConfiguration endpointConfiguration, string remoteAddress) : 
+                base(ServicioSpellerClient.GetBindingForEndpoint(endpointConfiguration), new System.ServiceModel.EndpointAddress(remoteAddress))
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public SpellerServiceClient(EndpointConfiguration endpointConfiguration, System.ServiceModel.EndpointAddress remoteAddress) : 
-                base(SpellerServiceClient.GetBindingForEndpoint(endpointConfiguration), remoteAddress)
+        public ServicioSpellerClient(EndpointConfiguration endpointConfiguration, System.ServiceModel.EndpointAddress remoteAddress) : 
+                base(ServicioSpellerClient.GetBindingForEndpoint(endpointConfiguration), remoteAddress)
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public SpellerServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public ServicioSpellerClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
         }
@@ -88,7 +88,7 @@ namespace ConexionCorrector
         
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
         {
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_ISpellerService))
+            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IServicioSpeller))
             {
                 System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
                 result.MaxBufferSize = int.MaxValue;
@@ -97,7 +97,7 @@ namespace ConexionCorrector
                 result.AllowCookies = true;
                 return result;
             }
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpsBinding_ISpellerService))
+            if ((endpointConfiguration == EndpointConfiguration.BasicHttpsBinding_IServicioSpeller))
             {
                 System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
                 result.MaxBufferSize = int.MaxValue;
@@ -112,13 +112,13 @@ namespace ConexionCorrector
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_ISpellerService))
+            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IServicioSpeller))
             {
-                return new System.ServiceModel.EndpointAddress("http://appstip.iatext.ulpgc.es/ServicioSpellerWCF/SpellerService.svc");
+                return new System.ServiceModel.EndpointAddress("http://appstip.iatext.ulpgc.es/ServicioSpellerWCF/ServicioSpeller.svc");
             }
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpsBinding_ISpellerService))
+            if ((endpointConfiguration == EndpointConfiguration.BasicHttpsBinding_IServicioSpeller))
             {
-                return new System.ServiceModel.EndpointAddress("https://appstip.iatext.ulpgc.es/ServicioSpellerWCF/SpellerService.svc");
+                return new System.ServiceModel.EndpointAddress("https://appstip.iatext.ulpgc.es/ServicioSpellerWCF/ServicioSpeller.svc");
             }
             throw new System.InvalidOperationException(string.Format("No se pudo encontrar un punto de conexión con el nombre \"{0}\".", endpointConfiguration));
         }
@@ -126,9 +126,9 @@ namespace ConexionCorrector
         public enum EndpointConfiguration
         {
             
-            BasicHttpBinding_ISpellerService,
+            BasicHttpBinding_IServicioSpeller,
             
-            BasicHttpsBinding_ISpellerService,
+            BasicHttpsBinding_IServicioSpeller,
         }
     }
 }

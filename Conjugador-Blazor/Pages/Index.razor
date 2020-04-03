@@ -1,4 +1,6 @@
 ﻿@page "/"
+@page "/conjugador"
+@page "/conjugador/{searchInput}"
 @using Services
 @using ConexionLematizador
 <!-- SEARCH FORM -->
@@ -16,11 +18,12 @@
 <hr>
 <hr>
 <div class="uk-container" id="data_container">
-    <TablaReconocimientos @ref="tablaReconocimientos" searchText="@searchInput"></TablaReconocimientos>
+    <TablaReconocimientos @ref="tablaReconocimientos" searchText="@navigatableSearchInput"></TablaReconocimientos>
 </div>
 @code{
     private LematizadorService _lematizador { get; set; }
-    public string searchInput { get; set; }
+    [Parameter] public string searchInput { get; set; }
+    public string navigatableSearchInput { get; set; }
     public TablaReconocimientos tablaReconocimientos { get; set; }
 }
 
@@ -29,8 +32,14 @@
     {
         _lematizador = new LematizadorService();
     }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (searchInput != null) Search();
+    }
     private void Search()
     {
+        navigatableSearchInput = searchInput;
         tablaReconocimientos.SearchVerb(searchInput);
     }
 }

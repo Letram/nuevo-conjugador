@@ -20,6 +20,8 @@ namespace ConexionConjugador
         
         private string DescripcionField;
         
+        private int IdNotaField;
+        
         private int IdNotaAgrupadaField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
@@ -32,6 +34,19 @@ namespace ConexionConjugador
             set
             {
                 this.DescripcionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IdNota
+        {
+            get
+            {
+                return this.IdNotaField;
+            }
+            set
+            {
+                this.IdNotaField = value;
             }
         }
         
@@ -66,6 +81,8 @@ namespace ConexionConjugador
         private System.Collections.Generic.List<int> IdNotasField;
         
         private string InfinitivoField;
+        
+        private System.Collections.Generic.List<ConexionConjugador.Nota> NotasField;
         
         private int SumaFrecField;
         
@@ -148,6 +165,19 @@ namespace ConexionConjugador
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.List<ConexionConjugador.Nota> Notas
+        {
+            get
+            {
+                return this.NotasField;
+            }
+            set
+            {
+                this.NotasField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public int SumaFrec
         {
             get
@@ -167,7 +197,7 @@ namespace ConexionConjugador
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioConjugacion/ConsultaDefinicion", ReplyAction="http://tempuri.org/IServicioConjugacion/ConsultaDefinicionResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ConsultaDefinicionAsync(int idDefinition);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ConsultaDefinicionAsync(int idInfinitivo);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServicioConjugacion/ConsultaNota", ReplyAction="http://tempuri.org/IServicioConjugacion/ConsultaNotaResponse")]
         System.Threading.Tasks.Task<ConexionConjugador.Nota> ConsultaNotaAsync(int idNota);
@@ -225,9 +255,9 @@ namespace ConexionConjugador
         {
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ConsultaDefinicionAsync(int idDefinition)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ConsultaDefinicionAsync(int idInfinitivo)
         {
-            return base.Channel.ConsultaDefinicionAsync(idDefinition);
+            return base.Channel.ConsultaDefinicionAsync(idInfinitivo);
         }
         
         public System.Threading.Tasks.Task<ConexionConjugador.Nota> ConsultaNotaAsync(int idNota)

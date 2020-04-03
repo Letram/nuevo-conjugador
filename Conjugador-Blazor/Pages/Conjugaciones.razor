@@ -1,7 +1,8 @@
 ﻿@using ConexionConjugador
-
+@if (conjugaciones != null)
+{
     <div uk-grid>
-        @foreach(InfoConjugacion conjugacion in conjugaciones)
+        @foreach (InfoConjugacion conjugacion in conjugaciones)
         {
             <div class="uk-card uk-card-default uk-card-body">
                 <p>@conjugacion.Forma</p>
@@ -10,15 +11,16 @@
                 <p>@conjugacion.IdFlexion</p>
                 <p>@(conjugacion.IdNotas == null ? "-" : string.Join(",", conjugacion.IdNotas.ToArray()))</p>
                 <p>@conjugacion.Infinitivo</p>
-                <p>@conjugacion.SumaFrec</p>                
+                <p>@conjugacion.SumaFrec</p>
             </div>
         }
     </div>
+}
 
 @code {
     [Parameter] public List<InfoConjugacion> conjugaciones { get; set; }
 }
-@functions{ 
+@functions{
     protected override void OnInitialized()
     {
         base.OnInitialized();

@@ -18,5 +18,26 @@ namespace Conjugador_Blazor.Services
             return result;
         }
 
+        public async Task<List<string>> GetDefinicionesAsync(int idFormaCanonica)
+        {
+            ServicioConjugacionClient client = new ServicioConjugacionClient(ServicioConjugacionClient.EndpointConfiguration.BasicHttpsBinding_IServicioConjugacion);
+
+            List<string> result = await client.ConsultaDefinicionAsync(idFormaCanonica);
+
+            await client.CloseAsync();
+
+            return result;
+        }
+
+        public async Task<List<int>> GetIdNotasAsync(int idFormaCanonica)
+        {
+            ServicioConjugacionClient client = new ServicioConjugacionClient(ServicioConjugacionClient.EndpointConfiguration.BasicHttpsBinding_IServicioConjugacion);
+
+            List<int> result = await client.ConsultaNotasDeVerboAsync(idFormaCanonica);
+
+            await client.CloseAsync();
+
+            return result;
+        }
     }
 }

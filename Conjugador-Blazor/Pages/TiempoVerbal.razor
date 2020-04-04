@@ -21,7 +21,18 @@
                                 if (lista.Count > 0)
                                 {
                                     <p class="@(lista[0].IdNotas != null ? (notasSeleccionadas.Any(nota => lista[0].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
-                                        @(modo == 1 ? "... que " : "")<span data-subjunctive="@(modo == 1 ? true : false)">@sujetos[sujetosIndex]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @lista[0].Forma
+                                        @(modo == 1 ? "... que " : "")
+                                        <span data-subjunctive="@(modo == 1 ? true : false)">@sujetos[sujetosIndex]</span>
+                                        @(opciones[0] ?
+                                            (MarkupString)("<span> no </span>") :
+                                            (MarkupString)(""))
+                                        @(opciones[2] ?
+                                            (MarkupString)(" <span>" + pronombres[sujetosIndex] + "</span>") :
+                                            (MarkupString)(""))
+                                        @lista[0].Forma
+                                        @(opciones[3] ?
+                                            (MarkupString)(" - <span>" + lista[0].FrecCREA + "</span>") :
+                                            (MarkupString)(""))
                                     </p>
                                 }
                                 else
@@ -40,7 +51,18 @@
                                 if (lista.Count > 0)
                                 {
                                     <p class="@(lista[1].IdNotas != null ? (notasSeleccionadas.Any(nota => lista[1].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
-                                        @(modo == 1 ? "... que " : "") <span data-subjunctive="@(modo == 1 ? true : false)">@sujetos[sujetosIndex]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @lista[1].Forma
+                                        @(modo == 1 ? "... que " : "")
+                                        <span data-subjunctive="@(modo == 1 ? true : false)">@sujetos[sujetosIndex]</span>
+                                        @(opciones[0] ?
+                                            (MarkupString)("<span> no </span>") :
+                                            (MarkupString)(""))
+                                        @(opciones[2] ?
+                                            (MarkupString)(" <span>" + pronombres[sujetosIndex] + "</span>") :
+                                            (MarkupString)(""))
+                                        @lista[1].Forma
+                                        @(opciones[3] ?
+                                            (MarkupString)(" - <span>" + lista[0].FrecCREA + "</span>") :
+                                            (MarkupString)(""))
                                     </p>
                                 }
                                 else
@@ -65,13 +87,31 @@
                                 if (modo == 2)
                                 {
                                     <p class="@(lista[0].IdNotas != null ? (notasSeleccionadas.Any(nota => lista[0].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
-                                        @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @lista[0].Forma <span data-imperative>@sujetos[sujetosIndex]</span>
+                                        @(opciones[0] ?
+                                            (MarkupString)("<span> no </span>") :
+                                            (MarkupString)(""))
+                                        @(opciones[2] ?
+                                            (MarkupString)(" <span>" + pronombres[sujetosIndex] + "</span>") :
+                                            (MarkupString)(""))
+                                        @lista[0].Forma
+                                        <span data-imperative>@sujetos[sujetosIndex]</span>
                                     </p>
                                 }
                                 else
                                 {
                                     <p class="@(lista[0].IdNotas != null ? (notasSeleccionadas.Any(nota => lista[0].IdNotas.Contains(nota)) ? "hasNote" : "") : "" )">
-                                        @(modo == 1 ? "... que " : "") <span data-subjunctive="@(modo == 1 ? true : false)">@sujetos[sujetosIndex]</span> @(opciones[0] ? (MarkupString)("<span> no </span>") : (MarkupString)("")) @lista[0].Forma
+                                        @(modo == 1 ? "... que " : "")
+                                        <span data-subjunctive="@(modo == 1 ? true : false)">@sujetos[sujetosIndex]</span>
+                                        @(opciones[0] ?
+                                            (MarkupString)("<span> no </span>") :
+                                            (MarkupString)(""))
+                                        @(opciones[2] ?
+                                            (MarkupString)(" <span>" + pronombres[sujetosIndex] + "</span>") :
+                                            (MarkupString)(""))
+                                        @lista[0].Forma
+                                        @(opciones[3] ?
+                                            (MarkupString)(" - <span>" + lista[0].FrecCREA + "</span>") :
+                                            (MarkupString)(""))
                                     </p>
                                 }
                             }
@@ -90,6 +130,7 @@
 
 @code{
     [Parameter] public string[] sujetos { get; set; }
+    [Parameter] public string[] pronombres { get; set; }
     [Parameter] public int modo { get; set; } //1 => indicativo, 2 => subjuntivo, 3 => imperativo
     [Parameter] public string[] nombreConjugacion { get; set; }
     [Parameter] public List<List<InfoConjugacion>> lenguajeConjugacion { get; set; }

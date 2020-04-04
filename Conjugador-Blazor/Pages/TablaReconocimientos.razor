@@ -90,21 +90,24 @@
                 </button>
             </div>
         </div>
-        <div id="notes">
-            @foreach (Nota nota in notas)
-            {
-                @*Hay que evitar poner las notas que se corresponden con los ejemplos o con cosas que no queremos tener en cuenta(id = grupos 0,1,2,7,9)*@
-                if (nota.IdNota >= 3001 && nota.IdNota <= 6203)
+        @if (notas != null)
+        {
+            <div id="notes">
+                @foreach (Nota nota in notas)
                 {
-                    int notaIndex = notas.IndexOf(nota);
-                    <label>
-                        <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" /> <span>@((MarkupString)(nota.Descripcion))</span>
-                    </label>
+                    @*Hay que evitar poner las notas que se corresponden con los ejemplos o con cosas que no queremos tener en cuenta(id = grupos 0,1,2,7,9)*@
+                    if (nota.IdNota >= 3001 && nota.IdNota <= 6203)
+                    {
+                        int notaIndex = notas.IndexOf(nota);
+                        <label>
+                            <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" /> <span>@((MarkupString)(nota.Descripcion))</span>
+                        </label>
+                    }
                 }
-            }
-        </div>
+            </div>
+        }
     </div>
-    <TablaModos indicativo="modoIndicativo" subjuntivo="modoSubjuntivo" imperativo="modoImperativo" formasImpersonales="formasImpersonales" notasSeleccionadas="selectedNotas"></TablaModos>
+    <TablaModos indicativo="modoIndicativo" subjuntivo="modoSubjuntivo" imperativo="modoImperativo" formasImpersonales="formasImpersonales" notasSeleccionadas="selectedNotas" noTieneCodigo="noTieneCodigo"></TablaModos>
     <Conjugaciones conjugaciones="conjugaciones"></Conjugaciones>
 }
 else
@@ -131,7 +134,7 @@ else
     private ModoVerbo modoIndicativo { get; set; }
     private ModoVerbo modoImperativo { get; set; }
     private ModoVerbo modoSubjuntivo { get; set; }
-
+    private bool noTieneCodigo { get; set; } = true;
     private int _selectedIndex { get; set; }
     public string[] reconocimientoHeaders =
     {
@@ -178,7 +181,10 @@ else
     public async void SearchVerb(string verb)
     {
         if (verb == "") return;
+
         searchText = verb;
+        selectedNotas.Clear();
+        noTieneCodigo = true;
         reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
         _selectedIndex = 0;
         if (reconocimientos.Count > 0)
@@ -215,7 +221,8 @@ else
             modoSubjuntivo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 60 && conjugacion.IdFlexion <= 87).ToList(), "Subjuntivo");
             modoImperativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 90 && conjugacion.IdFlexion <= 98).ToList(), "Imperativo");
             InfoConjugacion infinitivo = conjugaciones.Where(conjugacion => conjugacion.IdFlexion == 1).First();
-
+            bool aux = conjugaciones.Any(conj => conj.IdCategorias.Contains(3002));
+            noTieneCodigo = !aux;
             notas = infinitivo.Notas;
         }
 

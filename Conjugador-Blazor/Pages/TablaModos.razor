@@ -1,25 +1,29 @@
 ﻿@using Data
 @using ConexionConjugador
+@using System.Globalization
+
+@inject IStringLocalizer<TablaModos> _localizer
+
 
 <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" style="justify-content: center;">
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="negar" @onchange="e => opciones[0] = !opciones[0]">Negar la conjugación</label>
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="femenino" @onchange="e => { opciones[1] = !opciones[1]; ChangeSubjects(); }">Sujeto femenino</label>
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="pronominal" @onchange="e => opciones[2] = !opciones[2]" disabled="@noTieneCodigo">Pronominal</label>
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="frecuencia" @onchange="e => opciones[3] = !opciones[3]">Frecuencia en el CREA</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="negar" @onchange="e => opciones[0] = !opciones[0]">@_localizer["negar"].Value</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="femenino" @onchange="e => { opciones[1] = !opciones[1]; ChangeSubjects(); }">@_localizer["femenino"].Value</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="pronominal" @onchange="e => opciones[2] = !opciones[2]" disabled="@noTieneCodigo">@_localizer["pronominal"].Value</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="frecuencia" @onchange="e => opciones[3] = !opciones[3]">@_localizer["frecuencia"].Value</label>
 </div>
 <FormasImpersonales formasImpersonales="formasImpersonales" negar="opciones[0]"></FormasImpersonales>
 
 <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" style="justify-content: center;">
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 0)" @onchange="e => { modo = 0; ChangeSubjects(); } ">España</label>
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 1)" @onchange="e => { modo = 1; ChangeSubjects(); } ">Río de la Plata (voseo)</label>
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 2)" @onchange="e => { modo = 2; ChangeSubjects(); } ">Canarias (ustedes)</label>
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 3)" @onchange="e => { modo = 3; ChangeSubjects(); } ">Tratamiento formal, de respeto o cortesía</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 0)" @onchange="e => { modo = 0; ChangeSubjects(); } ">@_localizer["castellano"].Value</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 1)" @onchange="e => { modo = 1; ChangeSubjects(); } ">@_localizer["voseo"].Value</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 2)" @onchange="e => { modo = 2; ChangeSubjects(); } ">@_localizer["canario"].Value</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 3)" @onchange="e => { modo = 3; ChangeSubjects(); } ">@_localizer["formal"].Value</label>
 </div>
 
 <div id="simple_times_card" class="uk-card uk-card-default uk-card-body">
     <div class="uk-flex uk-flex-between card-heading">
         <h3 class="uk-card-title">
-            Tiempos simples
+            @_localizer["simple"].Value
         </h3>
         <div>
             <button class="uk-button uk-button-text close-btn"
@@ -33,10 +37,10 @@
     <div id="simple_tense_conjugation">
         <div uk-filter="target: .js-filter">
             <ul class="uk-subnav uk-subnav-pill">
-                <li uk-filter-control><a href="#">Todos los tiempos</a></li>
-                <li uk-filter-control="[data-time='indicativo']" data-color="green"><a href="#">Tiempo indicativo</a></li>
-                <li uk-filter-control="[data-time='subjuntivo']" data-color="blue"><a href="#">Tiempo subjuntivo</a></li>
-                <li uk-filter-control="[data-time='imperativo']" data-color="red"><a href="#">Tiempo imperativo</a></li>
+                <li uk-filter-control><a href="#">@_localizer["todos"].Value</a></li>
+                <li uk-filter-control="[data-time='indicativo']" data-color="green"><a href="#">@_localizer["indicativo"].Value</a></li>
+                <li uk-filter-control="[data-time='subjuntivo']" data-color="blue"><a href="#">@_localizer["subjuntivo"].Value</a></li>
+                <li uk-filter-control="[data-time='imperativo']" data-color="red"><a href="#">@_localizer["imperativo"].Value</a></li>
             </ul>
             <ul class="js-filter">
                 <li data-time="indicativo">
@@ -45,11 +49,11 @@
                         <div id="simple_times_indicative" class="uk-grid-match uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-small" uk-grid>
                             @foreach (ConjugacionVerbo conjugacion in indicativo.conjugaciones)
                             {
-                                <TiempoVerbal nombreConjugacion="conjugacion.nombreConjugacion" 
-                                              lenguajeConjugacion="(modo == 0 ? conjugacion.conjEsp : (modo == 1 ? conjugacion.conjVos : (modo == 2 ? conjugacion.conjCan : conjugacion.conjFor)))" 
+                                <TiempoVerbal nombreConjugacion="conjugacion.nombreConjugacion"
+                                              lenguajeConjugacion="(modo == 0 ? conjugacion.conjEsp : (modo == 1 ? conjugacion.conjVos : (modo == 2 ? conjugacion.conjCan : conjugacion.conjFor)))"
                                               modo="0"
                                               notasSeleccionadas="notasSeleccionadas"
-                                              opciones="opciones" 
+                                              opciones="opciones"
                                               sujetos="sujetos"
                                               pronombres="pronombres"></TiempoVerbal>
                             }
@@ -63,11 +67,11 @@
                         <div id="simple_times_subjunctive" class="uk-grid-match uk-grid-small" uk-grid>
                             @foreach (ConjugacionVerbo conjugacion in subjuntivo.conjugaciones)
                             {
-                                <TiempoVerbal nombreConjugacion="conjugacion.nombreConjugacion" 
+                                <TiempoVerbal nombreConjugacion="conjugacion.nombreConjugacion"
                                               lenguajeConjugacion="(modo == 0 ? conjugacion.conjEsp : (modo == 1 ? conjugacion.conjVos : (modo == 2 ? conjugacion.conjCan : conjugacion.conjFor)))"
-                                              modo="1" 
-                                              notasSeleccionadas="notasSeleccionadas" 
-                                              opciones="opciones" 
+                                              modo="1"
+                                              notasSeleccionadas="notasSeleccionadas"
+                                              opciones="opciones"
                                               sujetos="sujetos"
                                               pronombres="pronombres"></TiempoVerbal>
                             }
@@ -81,10 +85,10 @@
                         <div id="simple_times_imperative" class="uk-grid-match uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-small" uk-grid>
                             @foreach (ConjugacionVerbo conjugacion in imperativo.conjugaciones)
                             {
-                                <TiempoVerbal nombreConjugacion="conjugacion.nombreConjugacion" 
+                                <TiempoVerbal nombreConjugacion="conjugacion.nombreConjugacion"
                                               lenguajeConjugacion="(modo == 0 ? conjugacion.conjEsp : (modo == 1 ? conjugacion.conjVos : (modo == 2 ? conjugacion.conjCan : conjugacion.conjFor)))"
-                                              modo="2" 
-                                              notasSeleccionadas="notasSeleccionadas" 
+                                              modo="2"
+                                              notasSeleccionadas="notasSeleccionadas"
                                               opciones="opciones"
                                               sujetos="sujetos"
                                               pronombres="pronombres"></TiempoVerbal>
@@ -140,21 +144,21 @@
                 sujetos[4] = "ustedes";
 
                 pronombres[4] = "se";
-                
+
                 break;
             case 2:
                 sujetos[4] = "ustedes";
 
                 pronombres[4] = "se";
-                
+
                 break;
             case 3:
                 sujetos[1] = "usted";
                 sujetos[4] = "ustedes";
-                
+
                 pronombres[2] = "se";
                 pronombres[4] = "se";
-                
+
                 break;
             default:
                 break;

@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Conjugador_Blazor.Data;
+using Blazored.LocalStorage;
 
 namespace Conjugador_Blazor
 {
@@ -26,8 +30,22 @@ namespace Conjugador_Blazor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddServerSideBlazor();
-            //services.AddSingleton<WeatherForecastService>();
+            services.AddServerSideBlazor(options => options.DetailedErrors = true);
+
+            //añadimos el servicio para poder manejar el localstorage dado que no podemos tener variables de sesion
+            services.AddBlazoredLocalStorage();
+            //Añadimos el servicio del estado para poder manejar los eventos
+            services.AddScoped<AppState>();
+            //Para admitir el istringlocalizer y el ihtmllocalizer hacen falta el mvclocalization para ihtml y el localization para el istring
+            services.AddMvc().AddMvcLocalization();
+            services.AddLocalization();
+            var supportedCultures = new List<CultureInfo> { new CultureInfo("en-US"), new CultureInfo("es-ES") };
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("es-ES");
+                options.SupportedUICultures = supportedCultures;
+                options.SupportedCultures = supportedCultures;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +62,7 @@ namespace Conjugador_Blazor
                 app.UseHsts();
             }
 
+            app.UseRequestLocalization();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

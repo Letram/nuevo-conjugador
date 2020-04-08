@@ -39,5 +39,16 @@ namespace Conjugador_Blazor.Services
 
             return result;
         }
+
+        public async Task<List<string>> GetVerbosConNotaAsync(int idNota)
+        {
+            ServicioConjugacionClient client = new ServicioConjugacionClient(ServicioConjugacionClient.EndpointConfiguration.BasicHttpsBinding_IServicioConjugacion);
+
+            List<string> result = await client.ConsultaVerbosConNotaAsync(idNota);
+
+            await client.CloseAsync();
+
+            return result;
+        }
     }
 }

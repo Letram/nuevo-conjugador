@@ -38,6 +38,14 @@
 #verb_name h1 b:first-letter {
   text-transform: capitalize; }
 
+#verb_name #same_conjugation > b {
+  font-weight: 400 !important; }
+
+#verb_name #same_conjugation > font {
+  color: #333 !important; }
+  #verb_name #same_conjugation > font b {
+    font-weight: 600 !important; }
+
 #results .uk-card {
   padding: 0;
   margin: 0.2rem;

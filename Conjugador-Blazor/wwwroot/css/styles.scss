@@ -57,6 +57,15 @@
             }
         }
     }
+    #same_conjugation>b{
+        font-weight: 400 !important;
+    }
+    #same_conjugation>font{
+        color: #333 !important;
+        b{
+            font-weight: 600 !important;
+        }
+    }
 }
 
 #results {

@@ -7,11 +7,22 @@
 @using ConexionLematizador
 @using Data
 @using Microsoft.AspNetCore.Html;
+@using System.Globalization
+
+@inject IStringLocalizer<TablaReconocimientos> _localizer
+@inject AppState state
 
 @if (reconocimientos.Count > 0)
 {
     <header id="verb_name">
-        <h1 class="uk-text-center">Conjugación del verbo <b>@reconocimientos[_selectedIndex].FormaCanonica</b></h1>
+        <h1 class="uk-text-center">
+            @((MarkupString)string.Format(_localizer["conjugacion_verbo"].Value, reconocimientos[_selectedIndex].FormaCanonica))
+        </h1>
+        @*Aquí iría la parte de "verbos que se conjugan igual"*@
+        @if (notas.Count > 0)
+        {
+            <p class="uk-text-meta uk-text-center" id="same_conjugation">@((MarkupString)notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)</p>
+        }
     </header>
     <hr />
     <div id="results" class="uk-child-width-expand uk-grid-column-medium" uk-grid>
@@ -20,7 +31,9 @@
             int index = reconocimientos.IndexOf(reconocimiento);
             <div id="@index" class="uk-card uk-card-small uk-card-default @((_selectedIndex == index) ? "selected" : "")"
                  @onclick="e => GetDataFromSelectedIndex(index)">
-                <p class="uk-text-center">@searchText - (verbo @reconocimiento.FormaCanonica)</p>
+                <p class="uk-text-center">
+                    @string.Format(_localizer["verbo_seleccion"], searchText, reconocimiento.FormaCanonica)
+                </p>
             </div>
         }
     </div>
@@ -79,7 +92,7 @@
     <div class="uk-margin uk-card uk-card-default uk-card-body notes">
         <div class="uk-flex uk-flex-between card-heading">
             <h3 class="uk-card-title">
-                Notas
+                @_localizer["notas"].Value
             </h3>
             <div>
                 <button class="uk-button uk-button-text close-btn"
@@ -90,22 +103,31 @@
                 </button>
             </div>
         </div>
-        @if (notas != null)
-        {
-            <div id="notes">
-                @foreach (Nota nota in notas)
+        <div id="notes">
+            @if (notas.Count > 1)
+            {
+                @*Hay que evitar poner las notas que se corresponden con los ejemplos o con cosas que no queremos tener en cuenta(id = grupos 0,1,2,7,9)*@
+                @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 3001 && notaAux.IdNota <= 6203))
                 {
-                    @*Hay que evitar poner las notas que se corresponden con los ejemplos o con cosas que no queremos tener en cuenta(id = grupos 0,1,2,7,9)*@
-                    if (nota.IdNota >= 3001 && nota.IdNota <= 6203)
-                    {
-                        int notaIndex = notas.IndexOf(nota);
-                        <label>
-                            <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" /> <span>@((MarkupString)(nota.Descripcion))</span>
-                        </label>
-                    }
+                    int notaIndex = notas.IndexOf(nota);
+                    <label>
+                        <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" checked="@selectedNotas.Contains(nota.IdNota)" /> <span @onclick="e => GetVerbosConNota(nota.IdNota)">@((MarkupString)(nota.Descripcion))</span>
+                    </label>
                 }
-            </div>
-        }
+                //fuentes
+                @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 9001 && notaAux.IdNota <= 9018))
+                {
+                    <label>
+                        <span>@((MarkupString)(nota.Descripcion))</span>
+                    </label>
+                }
+            }
+            else
+            {
+
+                <h5 class="uk-text-meta uk-text-center">@_localizer["no_notas"].Value</h5>
+            }
+        </div>
     </div>
     <TablaModos indicativo="modoIndicativo" subjuntivo="modoSubjuntivo" imperativo="modoImperativo" formasImpersonales="formasImpersonales" notasSeleccionadas="selectedNotas" noTieneCodigo="noTieneCodigo"></TablaModos>
     <Conjugaciones conjugaciones="conjugaciones"></Conjugaciones>
@@ -113,7 +135,19 @@
 else
 {
     <header>
-        <h1 class="uk-text-center">Introduzca en el servicio un verbo válido.</h1>
+        @if (!esVerbo)
+        {
+            <h3 class="uk-text-center">@_localizer["no_verbo"].Value</h3>
+            <div>
+                <h5>@_localizer["sugerencias"].Value @(string.Join(", ", sugerencias.ToArray()))</h5>
+                <h5>@_localizer["similares"].Value @(string.Join(", ", similares.ToArray()))</h5>
+            </div>
+        }
+        else
+        {
+            <h3 class="uk-text-center">@_localizer["empezar"].Value</h3>
+
+        }
     </header>
 }
 
@@ -122,6 +156,7 @@ else
 
     private LematizadorService _lematizador { get; set; }
     private ConjugadorService _conjugador { get; set; }
+    private CorrectorService _corrector { get; set; }
     private List<Reconocimiento> reconocimientos { get; set; }
     private List<InfoConjugacion> conjugaciones { get; set; }
     private InfoCanonica info { get; set; }
@@ -136,6 +171,13 @@ else
     private ModoVerbo modoSubjuntivo { get; set; }
     private bool noTieneCodigo { get; set; } = true;
     private int _selectedIndex { get; set; }
+
+    private bool esVerbo { get; set; } = true;
+
+    private List<string> sugerencias { get; set; }
+    private List<string> similares { get; set; }
+
+
     public string[] reconocimientoHeaders =
     {
             "Forma canónica",
@@ -164,18 +206,21 @@ else
             "PosAcepcionSecField"
         };
 
-
 }
 @functions{
 
     protected override void OnInitialized()
     {
         reconocimientos = new List<Reconocimiento>();
+        similares = new List<string>();
+        sugerencias = new List<string>();
         info = new InfoCanonica();
         _lematizador = new LematizadorService();
         _conjugador = new ConjugadorService();
+        _corrector = new CorrectorService();
         _selectedIndex = 0;
         selectedNotas = new List<int>();
+        notas = new List<Nota>();
     }
 
     public async void SearchVerb(string verb)
@@ -184,14 +229,22 @@ else
 
         searchText = verb;
         selectedNotas.Clear();
+        notas.Clear();
         noTieneCodigo = true;
-        reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
         _selectedIndex = 0;
+        reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
         if (reconocimientos.Count > 0)
         {
             GetDataFromSelectedIndex(_selectedIndex);
         }
-        else StateHasChanged();
+        else
+        {
+            //No es un verbo o no está bien escrito
+            esVerbo = false;
+            similares = await _corrector.GetSimilaresAsync(verb);
+            sugerencias = await _corrector.GetSugerenciasAsync(verb);
+            StateHasChanged();
+        }
     }
 
     public async void GetDataFromSelectedIndex(int index)
@@ -330,41 +383,6 @@ else
         return result;
     }
 
-    //private ConjugacionVerbo GetConjugacionFromInfoConjugacion
-    //    (
-    //        string[] nombreConjugacion,
-    //        List<InfoConjugacion> infoConjugaciones,
-    //        int[] espIndex,
-    //        int[] canIndex,
-    //        int indexVos = -1,
-    //        bool incompleto = false
-    //    )
-    //{
-    //    ConjugacionVerbo conjugacion = new ConjugacionVerbo();
-
-    //    conjugacion.nombreConjugacion = nombreConjugacion;
-    //    infoConjugaciones.Sort((info1, info2) => info1.IdFlexion.CompareTo(info2.IdFlexion));
-    //    if (incompleto)
-    //    {
-    //        conjugacion.conjEsp = new List<InfoConjugacion>();
-    //        conjugacion.conjEsp.Add(new InfoConjugacion());
-    //        conjugacion.conjEsp.Add(infoConjugaciones[0]);
-    //        conjugacion.conjEsp.Add(new InfoConjugacion());
-    //        conjugacion.conjEsp.Add(infoConjugaciones[1]);
-    //        conjugacion.conjEsp.Add(infoConjugaciones[2]);
-    //        conjugacion.conjEsp.Add(new InfoConjugacion());
-    //    }
-    //    else
-    //    {
-    //        conjugacion.conjEsp = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= espIndex[0] && infoConjugacion.IdFlexion <= espIndex[1]).ToList();
-    //    }
-    //    conjugacion.conjCan = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).ToList();
-    //    conjugacion.conjFor = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion >= canIndex[0] && infoConjugacion.IdFlexion <= canIndex[1]).ToList();
-    //    conjugacion.conjVos = infoConjugaciones.Where(infoConjugacion => infoConjugacion.IdFlexion == indexVos).ToList();
-
-    //    return conjugacion;
-    //}
-
     private ConjugacionVerbo GetConjugacionFromInfoConjugacion_2
             (
                 string[] nombreConjugacion,
@@ -418,5 +436,11 @@ else
         {
             selectedNotas.Add(idNota);
         }
+    }
+
+    private async void GetVerbosConNota(int idNota)
+    {
+        List<string> verbosConNota = await _conjugador.GetVerbosConNotaAsync(idNota);
+        Console.WriteLine(string.Join(", ", verbosConNota));
     }
 }

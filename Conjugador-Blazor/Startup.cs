@@ -32,12 +32,10 @@ namespace Conjugador_Blazor
             services.AddRazorPages();
             services.AddServerSideBlazor(options => options.DetailedErrors = true);
 
-            //añadimos el servicio para poder manejar el localstorage dado que no podemos tener variables de sesion
-            services.AddBlazoredLocalStorage();
             //Añadimos el servicio del estado para poder manejar los eventos
             services.AddScoped<AppState>();
-            //Para admitir el istringlocalizer y el ihtmllocalizer hacen falta el mvclocalization para ihtml y el localization para el istring
-            services.AddMvc().AddMvcLocalization();
+
+            //así como lo necesario para admitir la localización
             services.AddLocalization();
             var supportedCultures = new List<CultureInfo> { new CultureInfo("en-US"), new CultureInfo("es-ES") };
             services.Configure<RequestLocalizationOptions>(options =>

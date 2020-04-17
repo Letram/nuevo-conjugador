@@ -112,6 +112,34 @@
   display: block;
   padding: 0.2rem 0; }
 
+#data_container .notes .tabla-resultados {
+  overflow-y: scroll;
+  height: 20rem;
+  justify-content: center; }
+  @media screen and (min-width: 640px) {
+    #data_container .notes .tabla-resultados {
+      height: 20rem;
+      margin-left: 0.1rem;
+      margin-right: 0.1rem; } }
+  @media screen and (min-width: 960px) {
+    #data_container .notes .tabla-resultados {
+      height: 30rem;
+      margin-left: 0.2rem;
+      margin-right: 0.2rem; } }
+  @media screen and (min-width: 1200px) {
+    #data_container .notes .tabla-resultados {
+      height: 40rem;
+      margin-left: 0.3rem;
+      margin-right: 0.3rem; } }
+  #data_container .notes .tabla-resultados div {
+    border: 1px solid gray;
+    border-radius: 4px;
+    padding: 0;
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+    display: flex;
+    justify-content: center; }
+
 #data_container .impersonal ul li > p::first-letter {
   text-transform: capitalize; }
 

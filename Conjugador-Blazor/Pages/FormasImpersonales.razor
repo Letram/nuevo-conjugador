@@ -1,4 +1,9 @@
-﻿@inject IStringLocalizer<FormasImpersonales> _localizer 
+﻿@using Data
+
+@inject IStringLocalizer<FormasImpersonales> _localizer
+@inject AppState state
+
+@implements IDisposable
 
 @if (formasImpersonales != null)
 {
@@ -7,7 +12,7 @@
             <div id="impersonal_simple_card" class="uk-card uk-card-default uk-card-body">
                 <div class="uk-flex uk-flex-between card-heading">
                     <h3 class="uk-card-title">
-                        @_localizer["forma_impersonal"].Value
+                        @_localizer.WithCulture(state.getCurrentCulture())["forma_impersonal"].Value
                     </h3>
                     <div>
                         <button class="uk-button uk-button-text close-btn"
@@ -21,9 +26,9 @@
                 <div class="uk-grid-divider impersonal" uk-grid>
                     <div class="uk-width-small">
                         <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_simple">
-                            <li class="uk-active"><a href="#">@_localizer["infinitivo"].Value</a></li>
-                            <li><a href="#">@_localizer["gerundio"].Value</a></li>
-                            <li><a href="#">@_localizer["participio"].Value</a></li>
+                            <li class="uk-active"><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["infinitivo"].Value</a></li>
+                            <li><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["gerundio"].Value</a></li>
+                            <li><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["participio"].Value</a></li>
                         </ul>
                     </div>
                     <div class="uk-with-expand">
@@ -60,7 +65,7 @@
             <div id="impersonal_compound_card" class="uk-card uk-card-default uk-card-body">
                 <div class="uk-flex uk-flex-between card-heading">
                     <h3 class="uk-card-title">
-                        @_localizer["forma_impersonal_comp"].Value
+                        @_localizer.WithCulture(state.getCurrentCulture())["forma_impersonal_comp"].Value
                     </h3>
                     <div>
                         <button class="uk-button uk-button-text close-btn"
@@ -74,8 +79,8 @@
                 <div id="verb_impersonal_compound" class="uk-grid-divider impersonal" uk-grid>
                     <div class="uk-width-small">
                         <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_compound">
-                            <li class="uk-active"><a href="#">@_localizer["infinitivo_comp"].Value</a></li>
-                            <li><a href="#">@_localizer["gerundio_comp"].Value</a></li>
+                            <li class="uk-active"><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["infinitivo_comp"].Value</a></li>
+                            <li><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["gerundio_comp"].Value</a></li>
                         </ul>
                     </div>
                     <div class="uk-with-expand">
@@ -92,4 +97,22 @@
 @code {
     [Parameter] public string[] formasImpersonales { get; set; }
     [Parameter] public bool negar { get; set; }
+}
+
+@functions {
+
+    protected override void OnInitialized()
+    {
+        state.OnChange += OnCultureChange;
+    }
+
+    public void Dispose()
+    {
+        state.OnChange -= OnCultureChange;
+    }
+
+    private void OnCultureChange()
+    {
+        StateHasChanged();
+    }
 }

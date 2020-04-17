@@ -13,13 +13,13 @@
 <!-- SEARCH FORM -->
 <div id="search_form" class="uk-container">
     <header>
-        <h1 class="uk-text-center">@_localizer["escribe_verbo"].Value</h1>
+        <h1 class="uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["escribe_verbo"].Value</h1>
     </header>
     <div class="form-container uk-flex uk-flex-column uk-flex-middle">
         <span class="input-container">
             <input type="text" name="verb" id="form_verb" @bind="searchInput" />
         </span>
-        <button type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick="Search">@_localizer["consultar"].Value</button>
+        <button type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick="Search">@_localizer.WithCulture(state.getCurrentCulture())["consultar"].Value</button>
     </div>
 </div>
 <hr>
@@ -61,21 +61,18 @@
 
     private void CambiarIdioma()
     {
-        if (state.getCurrentCulture().Equals(new CultureInfo("es-ES")))
+        if (state.getCurrentCulture().Equals(new CultureInfo("es")))
         {
-            state.ChangeCulture(new CultureInfo("en-US"));
+            state.ChangeCulture(new CultureInfo("en"));
         }
         else
         {
-            state.ChangeCulture(new CultureInfo("es-ES"));
+            state.ChangeCulture(new CultureInfo("es"));
         }
     }
 
     private void OnCultureChange()
     {
-        CultureInfo.CurrentCulture = state.currentCulture;
-        CultureInfo.CurrentUICulture = state.currentCulture;
-
         StateHasChanged();
     }
 }

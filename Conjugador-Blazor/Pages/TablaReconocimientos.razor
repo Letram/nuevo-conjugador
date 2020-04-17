@@ -12,13 +12,14 @@
 @inject IStringLocalizer<TablaReconocimientos> _localizer
 @inject AppState state
 
+@implements IDisposable
+
 @if (reconocimientos.Count > 0)
 {
     <header id="verb_name">
         <h1 class="uk-text-center">
-            @((MarkupString)string.Format(_localizer["conjugacion_verbo"].Value, reconocimientos[_selectedIndex].FormaCanonica))
+            @((MarkupString)string.Format(_localizer.WithCulture(state.getCurrentCulture())["conjugacion_verbo"].Value, reconocimientos[_selectedIndex].FormaCanonica))
         </h1>
-        @*Aquí iría la parte de "verbos que se conjugan igual"*@
         @if (notas.Count > 0)
         {
             <p class="uk-text-meta uk-text-center" id="same_conjugation">@((MarkupString)notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)</p>
@@ -32,12 +33,12 @@
             <div id="@index" class="uk-card uk-card-small uk-card-default @((_selectedIndex == index) ? "selected" : "")"
                  @onclick="e => GetDataFromSelectedIndex(index)">
                 <p class="uk-text-center">
-                    @string.Format(_localizer["verbo_seleccion"], searchText, reconocimiento.FormaCanonica)
+                    @string.Format(_localizer.WithCulture(state.getCurrentCulture())["verbo_seleccion"], searchText, reconocimiento.FormaCanonica)
                 </p>
             </div>
         }
     </div>
-    <table class="uk-table">
+    @*<table class="uk-table">
         <thead>
             <tr>
                 @foreach (string header in reconocimientoHeaders)
@@ -88,7 +89,7 @@
                 <td>@info.PosAcepcionSec</td>
             </tr>
         </tbody>
-    </table>
+    </table>*@
     <div class="uk-margin uk-card uk-card-default uk-card-body notes">
         <div class="uk-flex uk-flex-between card-heading">
             <h3 class="uk-card-title">
@@ -107,13 +108,30 @@
             @if (notas.Count > 1)
             {
                 @*Hay que evitar poner las notas que se corresponden con los ejemplos o con cosas que no queremos tener en cuenta(id = grupos 0,1,2,7,9)*@
-                @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 3001 && notaAux.IdNota <= 6203))
+                @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 1000 && notaAux.IdNota <= 7999))
                 {
                     int notaIndex = notas.IndexOf(nota);
-                    <label>
-                        <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" checked="@selectedNotas.Contains(nota.IdNota)" /> <span @onclick="e => GetVerbosConNota(nota.IdNota)">@((MarkupString)(nota.Descripcion))</span>
-                    </label>
+                    <div uk-grid>
+                        <div class="uk-width-auto">
+                            <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" checked="@selectedNotas.Contains(nota.IdNota)" />
+                        </div>
+                        <div class="uk-width-expand">
+                            @if ((nota.IdNota >= 1000 && nota.IdNota <= 4999) || (nota.IdNota >= 6000 && nota.IdNota <= 7999))
+                            {
+                                <span @onclick="e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>
+                            }
+                            else
+                            {
+                                <span >@((MarkupString)(nota.Descripcion))</span>
+
+                            }
+                        </div>
+                    </div>
+                    @*<label>
+                            <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" checked="@selectedNotas.Contains(nota.IdNota)" /> <span @onclick="e => GetVerbosConNota(nota.IdNota)">@((MarkupString)(nota.Descripcion))</span>
+                        </label>*@
                 }
+                <TablaResultados listOfResults="resultadosNota" titleOfNote="@tituloDeLaNota"></TablaResultados>
                 //fuentes
                 @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 9001 && notaAux.IdNota <= 9018))
                 {
@@ -125,7 +143,7 @@
             else
             {
 
-                <h5 class="uk-text-meta uk-text-center">@_localizer["no_notas"].Value</h5>
+                <h5 class="uk-text-meta uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["no_notas"].Value</h5>
             }
         </div>
     </div>
@@ -137,21 +155,22 @@ else
     <header>
         @if (!esVerbo)
         {
-            <h3 class="uk-text-center">@_localizer["no_verbo"].Value</h3>
+            <h3 class="uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["no_verbo"].Value</h3>
             <div>
-                <h5>@_localizer["sugerencias"].Value @(string.Join(", ", sugerencias.ToArray()))</h5>
-                <h5>@_localizer["similares"].Value @(string.Join(", ", similares.ToArray()))</h5>
+                <h5>@_localizer.WithCulture(state.getCurrentCulture())["sugerencias"].Value @(string.Join(", ", sugerencias.ToArray()))</h5>
+                <h5>@_localizer.WithCulture(state.getCurrentCulture())["similares"].Value @(string.Join(", ", similares.ToArray()))</h5>
             </div>
         }
         else
         {
-            <h3 class="uk-text-center">@_localizer["empezar"].Value</h3>
+            <h3 class="uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["empezar"].Value</h3>
 
         }
     </header>
 }
 
 @code{
+
     [Parameter] public string searchText { get; set; }
 
     private LematizadorService _lematizador { get; set; }
@@ -177,6 +196,9 @@ else
     private List<string> sugerencias { get; set; }
     private List<string> similares { get; set; }
 
+    //Para el buscador de las notas
+    private List<string> resultadosNota { get; set; }
+    private string tituloDeLaNota { get; set;}
 
     public string[] reconocimientoHeaders =
     {
@@ -221,6 +243,19 @@ else
         _selectedIndex = 0;
         selectedNotas = new List<int>();
         notas = new List<Nota>();
+        resultadosNota = new List<string>();
+        tituloDeLaNota = "";
+        state.OnChange += OnCultureChange;
+    }
+
+    public void Dispose()
+    {
+        state.OnChange -= OnCultureChange;
+    }
+
+    private void OnCultureChange()
+    {
+        StateHasChanged();
     }
 
     public async void SearchVerb(string verb)
@@ -301,7 +336,7 @@ else
                 //Preterito imperfecto o copreterito
                 listaConjugaciones.Add(
                     GetConjugacionFromInfoConjugacion_2(
-                        new string[] { "Pretérito imperfecto", "Copretérito" },
+                        new string[] { "Preterito_imperfecto", "Copreterito" },
                         conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 20 && conjugacion.IdFlexion <= 27).ToList(),
                         new int[] { 20, 25 },
                         new int[] { 26, 27 }
@@ -310,7 +345,7 @@ else
                 //Pretérito perfecto simple o pretérito
                 listaConjugaciones.Add(
                     GetConjugacionFromInfoConjugacion_2(
-                        new string[] { "Pretérito perfecto simple", "Pretérito" },
+                        new string[] { "Preterito_perfecto_simple", "Preterito" },
                         conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 30 && conjugacion.IdFlexion <= 37).ToList(),
                         new int[] { 30, 35 },
                         new int[] { 36, 37 }
@@ -319,7 +354,7 @@ else
                 //Futuro simple
                 listaConjugaciones.Add(
                     GetConjugacionFromInfoConjugacion_2(
-                        new string[] { "Futuro simple", "Futuro" },
+                        new string[] { "Futuro_simple", "Futuro" },
                         conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 40 && conjugacion.IdFlexion <= 47).ToList(),
                         new int[] { 40, 45 },
                         new int[] { 46, 47 }
@@ -328,7 +363,7 @@ else
                 //Condicional simple
                 listaConjugaciones.Add(
                     GetConjugacionFromInfoConjugacion_2(
-                        new string[] { "Condicional simple", "Pospretérito" },
+                        new string[] { "Condicional_simple", "Pospreterito" },
                         conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 50 && conjugacion.IdFlexion <= 57).ToList(),
                         new int[] { 50, 55 },
                         new int[] { 56, 57 }
@@ -348,7 +383,7 @@ else
                 //Pretérito imperfecto subjuntivo
                 listaConjugaciones.Add(
                     GetConjugacionFromInfoConjugacion_2(
-                        new string[] { "Pretérito imperfecto", "Pretérito" },
+                        new string[] { "Preterito_imperfecto", "Preterito" },
                         conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 70 && conjugacion.IdFlexion <= 77).ToList(),
                         new int[] { 70, 75 },
                         new int[] { 76, 77 }
@@ -357,7 +392,7 @@ else
                 //Futuro subjuntivo
                 listaConjugaciones.Add(
                     GetConjugacionFromInfoConjugacion_2(
-                        new string[] { "Futuro simple", "Futuro" },
+                        new string[] { "Futuro", "Futuro_simple" },
                         conjugacionesDelModo.Where(conjugacion => conjugacion.IdFlexion >= 80 && conjugacion.IdFlexion <= 87).ToList(),
                         new int[] { 80, 85 },
                         new int[] { 86, 87 }
@@ -438,9 +473,19 @@ else
         }
     }
 
-    private async void GetVerbosConNota(int idNota)
+    private async void GetVerbosConNota(int idNota, string tituloNota)
     {
-        List<string> verbosConNota = await _conjugador.GetVerbosConNotaAsync(idNota);
-        Console.WriteLine(string.Join(", ", verbosConNota));
+        List<string> res = await _conjugador.GetVerbosConNotaAsync(idNota);
+        if (resultadosNota.Count == res.Count && resultadosNota.All(resultado => res.Contains(resultado)))
+        {
+            tituloDeLaNota = "";
+            resultadosNota.Clear();
+        }
+        else
+        {
+            tituloDeLaNota = tituloNota;
+            resultadosNota = res;
+        }
+        StateHasChanged();
     }
 }

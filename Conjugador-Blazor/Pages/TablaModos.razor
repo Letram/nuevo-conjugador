@@ -3,27 +3,29 @@
 @using System.Globalization
 
 @inject IStringLocalizer<TablaModos> _localizer
+@inject AppState state 
 
+@implements IDisposable
 
 <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" style="justify-content: center;">
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="negar" @onchange="e => opciones[0] = !opciones[0]">@_localizer["negar"].Value</label>
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="femenino" @onchange="e => { opciones[1] = !opciones[1]; ChangeSubjects(); }">@_localizer["femenino"].Value</label>
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="pronominal" @onchange="e => opciones[2] = !opciones[2]" disabled="@noTieneCodigo">@_localizer["pronominal"].Value</label>
-    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="frecuencia" @onchange="e => opciones[3] = !opciones[3]">@_localizer["frecuencia"].Value</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="negar" @onchange="e => opciones[0] = !opciones[0]">@_localizer.WithCulture(state.getCurrentCulture())["negar"].Value</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="femenino" @onchange="e => { opciones[1] = !opciones[1]; ChangeSubjects(); }">@_localizer.WithCulture(state.getCurrentCulture())["femenino"].Value</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="pronominal" @onchange="e => opciones[2] = !opciones[2]" disabled="@noTieneCodigo">@_localizer.WithCulture(state.getCurrentCulture())["pronominal"].Value</label>
+    <label><input class="uk-checkbox" style="margin-right:0.2rem;" type="checkbox" name="frecuencia" @onchange="e => opciones[3] = !opciones[3]">@_localizer.WithCulture(state.getCurrentCulture())["frecuencia"].Value</label>
 </div>
 <FormasImpersonales formasImpersonales="formasImpersonales" negar="opciones[0]"></FormasImpersonales>
 
 <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" style="justify-content: center;">
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 0)" @onchange="e => { modo = 0; ChangeSubjects(); } ">@_localizer["castellano"].Value</label>
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 1)" @onchange="e => { modo = 1; ChangeSubjects(); } ">@_localizer["voseo"].Value</label>
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 2)" @onchange="e => { modo = 2; ChangeSubjects(); } ">@_localizer["canario"].Value</label>
-    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 3)" @onchange="e => { modo = 3; ChangeSubjects(); } ">@_localizer["formal"].Value</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 0)" @onchange="e => { modo = 0; ChangeSubjects(); } ">@_localizer.WithCulture(state.getCurrentCulture())["castellano"].Value</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 1)" @onchange="e => { modo = 1; ChangeSubjects(); } ">@_localizer.WithCulture(state.getCurrentCulture())["voseo"].Value</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 2)" @onchange="e => { modo = 2; ChangeSubjects(); } ">@_localizer.WithCulture(state.getCurrentCulture())["canario"].Value</label>
+    <label><input class="uk-radio" style="margin-right:0.2rem;" type="radio" name="spanish_dialect" checked="@(modo == 3)" @onchange="e => { modo = 3; ChangeSubjects(); } ">@_localizer.WithCulture(state.getCurrentCulture())["formal"].Value</label>
 </div>
 
 <div id="simple_times_card" class="uk-card uk-card-default uk-card-body">
     <div class="uk-flex uk-flex-between card-heading">
         <h3 class="uk-card-title">
-            @_localizer["simple"].Value
+            @_localizer.WithCulture(state.getCurrentCulture())["simple"].Value
         </h3>
         <div>
             <button class="uk-button uk-button-text close-btn"
@@ -37,10 +39,10 @@
     <div id="simple_tense_conjugation">
         <div uk-filter="target: .js-filter">
             <ul class="uk-subnav uk-subnav-pill">
-                <li uk-filter-control><a href="#">@_localizer["todos"].Value</a></li>
-                <li uk-filter-control="[data-time='indicativo']" data-color="green"><a href="#">@_localizer["indicativo"].Value</a></li>
-                <li uk-filter-control="[data-time='subjuntivo']" data-color="blue"><a href="#">@_localizer["subjuntivo"].Value</a></li>
-                <li uk-filter-control="[data-time='imperativo']" data-color="red"><a href="#">@_localizer["imperativo"].Value</a></li>
+                <li uk-filter-control><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["todos"].Value</a></li>
+                <li uk-filter-control="[data-time='indicativo']" data-color="green"><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["indicativo"].Value</a></li>
+                <li uk-filter-control="[data-time='subjuntivo']" data-color="blue"><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["subjuntivo"].Value</a></li>
+                <li uk-filter-control="[data-time='imperativo']" data-color="red"><a href="#">@_localizer.WithCulture(state.getCurrentCulture())["imperativo"].Value</a></li>
             </ul>
             <ul class="js-filter">
                 <li data-time="indicativo">
@@ -118,6 +120,17 @@
     protected override void OnInitialized()
     {
         opciones = new bool[] { false, false, false, false };
+        state.OnChange += OnCultureChange;
+    }
+
+    public void Dispose()
+    {
+        state.OnChange -= OnCultureChange;
+    }
+
+    private void OnCultureChange()
+    {
+        StateHasChanged();
     }
 
     private void ManageListOfOptions(int index)

@@ -22,10 +22,14 @@
         </h1>
         @if (notas.Count > 0)
         {
-            <p class="uk-text-meta uk-text-center" id="same_conjugation">@((MarkupString)notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)</p>
+            <p class="uk-text-meta uk-text-center" style="cursor: pointer;" id="same_conjugation" @onclick="e => GetVerbosMismaconjugacion(notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).IdNota, notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)">
+                @((MarkupString)notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)
+            </p>
         }
     </header>
     <hr />
+    <TablaResultados listOfResults="resultadosConjugacion" titleOfNote="@tituloConjugacion"></TablaResultados>
+
     <div id="results" class="uk-child-width-expand uk-grid-column-medium" uk-grid>
         @foreach (Reconocimiento reconocimiento in reconocimientos)
         {
@@ -107,48 +111,34 @@
         <div id="notes">
             @if (notas.Count > 1)
             {
-                @*Hay que evitar poner las notas que se corresponden con los ejemplos o con cosas que no queremos tener en cuenta(id = grupos 0,1,2,7,9)*@
                 @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 1000 && notaAux.IdNota <= 7999))
                 {
-                    int notaIndex = notas.IndexOf(nota);
-                    <div uk-grid>
-                        <div class="uk-width-auto">
-                            <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" checked="@selectedNotas.Contains(nota.IdNota)" />
-                        </div>
-                        <div class="uk-width-expand">
-                            @if ((nota.IdNota >= 1000 && nota.IdNota <= 4999) || (nota.IdNota >= 6000 && nota.IdNota <= 7999))
-                            {
-                                <span @onclick="e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>
-                            }
-                            else
-                            {
-                                <span >@((MarkupString)(nota.Descripcion))</span>
-
-                            }
-                        </div>
-                    </div>
-                    @*<label>
-                            <input class="uk-checkbox" type="checkbox" name="@nota.IdNota" @onchange="e => ManageListOfNotes(notaIndex)" checked="@selectedNotas.Contains(nota.IdNota)" /> <span @onclick="e => GetVerbosConNota(nota.IdNota)">@((MarkupString)(nota.Descripcion))</span>
-                        </label>*@
+                    if (nota.IdNota < 7002 || nota.IdNota > 7173)
+                    {
+                        <TablaConNota conjugador="_conjugador"
+                                      HasCheckbox="conjugaciones.Any(conjugacion => (conjugacion.IdNotas != null && conjugacion.IdNotas.Contains(nota.IdNota)) && (conjugacion.IdFlexion != 1))"
+                                      IsSelected="selectedNotas.Contains(nota.IdNota)"
+                                      nota="nota"
+                                      OnCheckboxChange="ManageListOfNotesWithNoteId">
+                        </TablaConNota>
+                    }
                 }
-                <TablaResultados listOfResults="resultadosNota" titleOfNote="@tituloDeLaNota"></TablaResultados>
                 //fuentes
                 @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 9001 && notaAux.IdNota <= 9018))
                 {
-                    <label>
+                    <label style="margin-top:1.25rem;">
                         <span>@((MarkupString)(nota.Descripcion))</span>
                     </label>
                 }
             }
             else
             {
-
                 <h5 class="uk-text-meta uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["no_notas"].Value</h5>
             }
         </div>
     </div>
     <TablaModos indicativo="modoIndicativo" subjuntivo="modoSubjuntivo" imperativo="modoImperativo" formasImpersonales="formasImpersonales" notasSeleccionadas="selectedNotas" noTieneCodigo="noTieneCodigo"></TablaModos>
-    <Conjugaciones conjugaciones="conjugaciones"></Conjugaciones>
+    @*<Conjugaciones conjugaciones="conjugaciones"></Conjugaciones>*@
 }
 else
 {
@@ -198,7 +188,11 @@ else
 
     //Para el buscador de las notas
     private List<string> resultadosNota { get; set; }
-    private string tituloDeLaNota { get; set;}
+    private string tituloDeLaNota { get; set; }
+
+    //Para la lista con la misma conjugacion
+    private List<string> resultadosConjugacion { get; set; }
+    private string tituloConjugacion { get; set; }
 
     public string[] reconocimientoHeaders =
     {
@@ -245,6 +239,8 @@ else
         notas = new List<Nota>();
         resultadosNota = new List<string>();
         tituloDeLaNota = "";
+        resultadosConjugacion = new List<string>();
+        tituloConjugacion = "";
         state.OnChange += OnCultureChange;
     }
 
@@ -260,7 +256,7 @@ else
 
     public async void SearchVerb(string verb)
     {
-        if (verb == "") return;
+        if (verb == "" || verb == null) return;
 
         searchText = verb;
         selectedNotas.Clear();
@@ -278,14 +274,16 @@ else
             esVerbo = false;
             similares = await _corrector.GetSimilaresAsync(verb);
             sugerencias = await _corrector.GetSugerenciasAsync(verb);
-            StateHasChanged();
         }
+        StateHasChanged();
     }
 
     public async void GetDataFromSelectedIndex(int index)
     {
         _selectedIndex = index;
-
+        selectedNotas.Clear();
+        notas.Clear();
+        noTieneCodigo = true;
         //La manera de hacerlo todo en paralelo para reducir tiempos de espera fue sacada del siguiente enlace
         //https://stackoverflow.com/questions/17197699/awaiting-multiple-tasks-with-different-results
         Task<List<InfoConjugacion>> taskConjugaciones = _conjugador.GetInfoConjugacion(reconocimientos[_selectedIndex].IdFormaCanonica);
@@ -460,32 +458,38 @@ else
 
         return conjugacion;
     }
-    private void ManageListOfNotes(int indexOfNotes)
-    {
-        int idNota = notas[indexOfNotes].IdNota;
-        if (selectedNotas.Contains(idNota))
-        {
-            selectedNotas.Remove(idNota);
-        }
-        else
-        {
-            selectedNotas.Add(idNota);
-        }
-    }
 
-    private async void GetVerbosConNota(int idNota, string tituloNota)
+    private void ManageListOfNotesWithNoteId(int noteId)
     {
-        List<string> res = await _conjugador.GetVerbosConNotaAsync(idNota);
-        if (resultadosNota.Count == res.Count && resultadosNota.All(resultado => res.Contains(resultado)))
+        if (selectedNotas.Contains(noteId))
         {
-            tituloDeLaNota = "";
-            resultadosNota.Clear();
+            selectedNotas.Remove(noteId);
         }
         else
         {
-            tituloDeLaNota = tituloNota;
-            resultadosNota = res;
+            selectedNotas.Add(noteId);
         }
         StateHasChanged();
+    }
+
+    private async void GetVerbosMismaconjugacion(int conjugacion, string titulo)
+    {
+        List<string> res = await _conjugador.GetVerbosConNotaAsync(conjugacion);
+        if (resultadosConjugacion.Count == res.Count && resultadosConjugacion.All(resultado => res.Contains(resultado)))
+        {
+            tituloDeLaNota = "";
+            resultadosConjugacion.Clear();
+        }
+        else
+        {
+            tituloConjugacion = titulo;
+            resultadosConjugacion = res;
+        }
+        StateHasChanged();
+    }
+
+    private bool HasToHaveCheckbox(int nota)
+    {
+        return false;
     }
 }

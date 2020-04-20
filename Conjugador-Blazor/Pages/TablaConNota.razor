@@ -1,0 +1,51 @@
+﻿@using Data
+@using Services
+@using ConexionConjugador
+
+<div uk-grid>
+    <div class="uk-width-auto">
+        <input class="uk-checkbox" style="opacity: @(HasCheckbox ? "1" : "0" )" type="checkbox" name="@nota.IdNota" @onchange="e => OnCheckboxChange.InvokeAsync(nota.IdNota)" checked="@IsSelected" />
+    </div>
+    <div class="uk-width-expand">
+        @if ((nota.IdNota >= 1000 && nota.IdNota <= 4999) || (nota.IdNota >= 6000 && nota.IdNota <= 7999))
+        {
+            <span @onclick="e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>
+        }
+        else
+        {
+            <span>@((MarkupString)(nota.Descripcion))</span>
+        }
+    </div>
+</div>
+<TablaResultados listOfResults="verbosConNota" titleOfNote="@nota.Descripcion"></TablaResultados>
+
+@code {
+    [Parameter] public bool IsSelected { get; set; }
+    [Parameter] public bool HasCheckbox { get; set; }
+    [Parameter] public Nota nota { get; set; }
+    [Parameter] public ConjugadorService conjugador { get; set; }
+    [Parameter] public EventCallback<int> OnCheckboxChange { get; set; }
+
+    private List<string> verbosConNota { get; set; }
+}
+
+@functions{
+    protected override void OnInitialized()
+    {
+        verbosConNota = new List<string>();
+    }
+
+    private async void GetVerbosConNota(int idNota, string tituloNota)
+    {
+        List<string> res = await conjugador.GetVerbosConNotaAsync(idNota);
+        if (verbosConNota.Count == res.Count && verbosConNota.All(resultado => res.Contains(resultado)))
+        {
+            verbosConNota.Clear();
+        }
+        else
+        {
+            verbosConNota = res;
+        }
+        StateHasChanged();
+    }
+}

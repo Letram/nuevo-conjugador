@@ -11,13 +11,10 @@ namespace Conjugador_Blazor.Services
         {
 
             List<Reconocimiento> reconocimiento = new List<Reconocimiento>();
-            if ((await IsVerbAsync(verb)) == true)
-            {
-                ServicioLematizacionClient client = new ServicioLematizacionClient(ServicioLematizacionClient.EndpointConfiguration.BasicHttpsBinding_IServicioLematizacion);
-                reconocimiento = await client.ReconocerVerboAsync(verb, lang, multiPref);
-                await client.CloseAsync();
-            }
-            return reconocimiento;
+            ServicioLematizacionClient client = new ServicioLematizacionClient(ServicioLematizacionClient.EndpointConfiguration.BasicHttpsBinding_IServicioLematizacion);
+            reconocimiento = (await client.ReconocerVerboAsync(verb, lang, multiPref));
+            await client.CloseAsync();
+            return reconocimiento == null ? new List<Reconocimiento>() : reconocimiento;
         }
 
         public async Task<InfoCanonica> GetInfoCanonicaAsync(int idFormaCanonica)

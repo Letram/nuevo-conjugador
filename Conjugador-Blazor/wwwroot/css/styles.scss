@@ -185,39 +185,39 @@ $media_xl: 1600px;
             display: block;
             padding: 0.2rem 0;
         }
+    }
 
-        .tabla-resultados {
-            overflow-y: scroll;
-            height: 20rem;
+    .tabla-resultados {
+        overflow-y: scroll;
+        max-height: 20rem;
+        justify-content: center;
+
+        @media screen and (min-width: $media_s) {
+            max-height: 20rem;
+            margin-left: 0.1rem;
+            margin-right: 0.1rem;
+        }
+
+        @media screen and (min-width: $media_m) {
+            max-height: 30rem;
+            margin-left: 0.2rem;
+            margin-right: 0.2rem;
+        }
+
+        @media screen and (min-width: $media_l) {
+            max-height: 40rem;
+            margin-left: 0.3rem;
+            margin-right: 0.3rem;
+        }
+
+        div {
+            border: 1px solid rgb(128, 128, 128);
+            border-radius: 4px;
+            padding: 0;
+            margin-left: 0.2rem;
+            margin-right: 0.2rem;
+            display: flex;
             justify-content: center;
-
-            @media screen and (min-width: $media_s) {
-                height: 20rem;
-                margin-left: 0.1rem;
-                margin-right: 0.1rem;
-            }
-
-            @media screen and (min-width: $media_m) {
-                height: 30rem;
-                margin-left: 0.2rem;
-                margin-right: 0.2rem;
-            }
-
-            @media screen and (min-width: $media_l) {
-                height: 40rem;
-                margin-left: 0.3rem;
-                margin-right: 0.3rem;
-            }
-
-            div {
-                border: 1px solid rgb(128, 128, 128);
-                border-radius: 4px;
-                padding: 0;
-                margin-left: 0.2rem;
-                margin-right: 0.2rem;
-                display: flex;
-                justify-content: center;
-            }
         }
     }
 

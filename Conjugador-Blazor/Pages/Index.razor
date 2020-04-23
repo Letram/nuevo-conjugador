@@ -5,7 +5,6 @@
 @using ConexionLematizador
 @using System.Globalization
 @using Data
-
 @inject AppState state
 @inject IStringLocalizer<Index> _localizer
 
@@ -19,13 +18,14 @@
         <span class="input-container">
             <input type="text" name="verb" id="form_verb" @bind="searchInput" />
         </span>
-        <button type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick="Search">@_localizer.WithCulture(state.getCurrentCulture())["consultar"].Value</button>
+        <button type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick="async e => await Search()">@_localizer.WithCulture(state.getCurrentCulture())["consultar"].Value</button>
     </div>
+    <h1>Times fired: @counter</h1>
 </div>
 <hr>
 <hr>
 <div class="uk-container" id="data_container">
-    <button @onclick="e => CambiarIdioma()">Boton para cambiar idioma (experimental)</button>
+    @*<button @onclick="e => CambiarIdioma()">Boton para cambiar idioma (experimental)</button>*@
 
     <TablaReconocimientos @ref="tablaReconocimientos" searchText="@navigatableSearchInput"></TablaReconocimientos>
 </div>
@@ -34,6 +34,7 @@
     [Parameter] public string searchInput { get; set; }
     public string navigatableSearchInput { get; set; }
     public TablaReconocimientos tablaReconocimientos { get; set; }
+    private int counter { get; set; }
 }
 
 @functions{
@@ -53,10 +54,12 @@
     {
         if (searchInput != null) Search();
     }
-    private void Search()
+
+    private async Task Search()
     {
+        counter = counter + 1;
         navigatableSearchInput = searchInput;
-        tablaReconocimientos.SearchVerb(searchInput);
+        await tablaReconocimientos.SearchVerb(searchInput);
     }
 
     private void CambiarIdioma()

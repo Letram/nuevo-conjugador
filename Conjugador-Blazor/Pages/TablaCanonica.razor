@@ -1,0 +1,62 @@
+﻿@using Services
+@using ConexionLematizador
+@using Data 
+<table class="uk-table">
+    <thead>
+        <tr>
+            @foreach (string header in canonicaHeaders)
+            {
+                <th>@header</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (InfoCanonica info in infos)
+        {
+            <tr>
+                <td>@info.Antigua</td>
+                <td>@info.DRAEXXIII</td>
+                <td>@info.FormaCanonica</td>
+                <td>@info.Frecuencia</td>
+                <td>@info.IdCategoria</td>
+                <td>@info.IdCategoriaGN</td>
+                <td>@info.IdFlexion</td>
+                <td>@info.MaxAcepciones</td>
+                <td>@info.MaxEtimologia</td>
+                <td>@info.NumAcepcion</td>
+                <td>@info.NumAcepcionSec</td>
+                <td>@info.NumEtimologia</td>
+                <td>@info.PosAcepcion</td>
+                <td>@info.PosAcepcionSec</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public ConcurrentSet<InfoCanonica> infos { get; set; } = new ConcurrentSet<InfoCanonica>(new InfoCanonicaComparer());
+    private string[] canonicaHeaders =
+{
+            "AntiguaField",
+            "DRAEXXIIIField",
+            "FormaCanonicaField",
+            "FrecuenciaField",
+            "IdCategoriaField",
+            "IdCategoriaGNField",
+            "IdFlexionField",
+            "MaxAcepcionesField",
+            "MaxEtimologiaField",
+            "NumAcepcionField",
+            "NumAcepcionSecField",
+            "NumEtimologiaField",
+            "PosAcepcionField",
+            "PosAcepcionSecField"
+        };
+}
+
+@functions{ 
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+}

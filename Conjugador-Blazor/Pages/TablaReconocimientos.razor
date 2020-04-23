@@ -6,13 +6,15 @@
 @using ConexionCorrector
 @using ConexionLematizador
 @using Data
-@using Microsoft.AspNetCore.Html;
+@using Microsoft.AspNetCore.Html
 @using System.Globalization
-
+@using System.Collections.Concurrent 
 @inject IStringLocalizer<TablaReconocimientos> _localizer
 @inject AppState state
 
 @implements IDisposable
+
+<TablaCanonica infos="infoArr"></TablaCanonica>
 
 @if (reconocimientos.Count > 0)
 {
@@ -42,7 +44,7 @@
             </div>
         }
     </div>
-    @*<table class="uk-table">
+    <table class="uk-table">
         <thead>
             <tr>
                 @foreach (string header in reconocimientoHeaders)
@@ -66,34 +68,6 @@
         </tbody>
     </table>
     <hr />
-    <table class="uk-table">
-        <thead>
-            <tr>
-                @foreach (string header in canonicaHeaders)
-                {
-                    <th>@header</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@info.Antigua</td>
-                <td>@info.DRAEXXIII</td>
-                <td>@info.FormaCanonica</td>
-                <td>@info.Frecuencia</td>
-                <td>@info.IdCategoria</td>
-                <td>@info.IdCategoriaGN</td>
-                <td>@info.IdFlexion</td>
-                <td>@info.MaxAcepciones</td>
-                <td>@info.MaxEtimologia</td>
-                <td>@info.NumAcepcion</td>
-                <td>@info.NumAcepcionSec</td>
-                <td>@info.NumEtimologia</td>
-                <td>@info.PosAcepcion</td>
-                <td>@info.PosAcepcionSec</td>
-            </tr>
-        </tbody>
-    </table>*@
     <div class="uk-margin uk-card uk-card-default uk-card-body notes">
         <div class="uk-flex uk-flex-between card-heading">
             <h3 class="uk-card-title">
@@ -168,7 +142,7 @@ else
     private CorrectorService _corrector { get; set; }
     private List<Reconocimiento> reconocimientos { get; set; }
     private List<InfoConjugacion> conjugaciones { get; set; }
-    private InfoCanonica info { get; set; }
+    private ConcurrentSet<InfoCanonica> infoArr { get; set; } = new ConcurrentSet<InfoCanonica>(new InfoCanonicaComparer());
 
     private List<Nota> notas { get; set; }
     private List<int> selectedNotas { get; set; }
@@ -204,23 +178,7 @@ else
             "Pronombres"
         };
 
-    public string[] canonicaHeaders =
-    {
-            "AntiguaField",
-            "DRAEXXIIIField",
-            "FormaCanonicaField",
-            "FrecuenciaField",
-            "IdCategoriaField",
-            "IdCategoriaGNField",
-            "IdFlexionField",
-            "MaxAcepcionesField",
-            "MaxEtimologiaField",
-            "NumAcepcionField",
-            "NumAcepcionSecField",
-            "NumEtimologiaField",
-            "PosAcepcionField",
-            "PosAcepcionSecField"
-        };
+
 
 }
 @functions{
@@ -230,7 +188,6 @@ else
         reconocimientos = new List<Reconocimiento>();
         similares = new List<string>();
         sugerencias = new List<string>();
-        info = new InfoCanonica();
         _lematizador = new LematizadorService();
         _conjugador = new ConjugadorService();
         _corrector = new CorrectorService();
@@ -254,7 +211,7 @@ else
         StateHasChanged();
     }
 
-    public async void SearchVerb(string verb)
+    public async Task SearchVerb(string verb)
     {
         if (verb == "" || verb == null) return;
 
@@ -266,7 +223,18 @@ else
         reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
         if (reconocimientos.Count > 0)
         {
-            GetDataFromSelectedIndex(_selectedIndex);
+            //Hacer las llamadas en paralelo para un array lo encontré en este enlace
+            //https://stackoverflow.com/questions/15136542/parallel-foreach-with-asynchronous-lambda
+            infoArr.Clear();
+            var tasks = reconocimientos.Select(async reconocimiento =>
+            {
+                var infoCanonicaOfReconocimiento = await _lematizador.GetInfoCanonicaAsync(reconocimiento.IdFormaCanonica);
+                infoArr.Add(infoCanonicaOfReconocimiento);
+            });
+            var count = reconocimientos.Count;
+            var count_2 = tasks.Count();
+            await Task.WhenAll(tasks);
+            await GetDataFromSelectedIndex(_selectedIndex);
         }
         else
         {
@@ -278,7 +246,7 @@ else
         StateHasChanged();
     }
 
-    public async void GetDataFromSelectedIndex(int index)
+    public async Task GetDataFromSelectedIndex(int index)
     {
         _selectedIndex = index;
         selectedNotas.Clear();
@@ -287,16 +255,13 @@ else
         //La manera de hacerlo todo en paralelo para reducir tiempos de espera fue sacada del siguiente enlace
         //https://stackoverflow.com/questions/17197699/awaiting-multiple-tasks-with-different-results
         Task<List<InfoConjugacion>> taskConjugaciones = _conjugador.GetInfoConjugacion(reconocimientos[_selectedIndex].IdFormaCanonica);
-        Task<InfoCanonica> taskCanonica = _lematizador.GetInfoCanonicaAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
         Task<List<string>> taskDefiniciones = _conjugador.GetDefinicionesAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
 
-        await Task.WhenAll(taskConjugaciones, taskCanonica, taskDefiniciones);
+        await Task.WhenAll(taskConjugaciones, taskDefiniciones);
 
         conjugaciones = await taskConjugaciones;
-        info = await taskCanonica;
         List<string> definiciones = await taskDefiniciones;
         //---
-
         if (conjugaciones != null)
         {
             formasImpersonales = new String[3];

@@ -10,7 +10,7 @@ namespace Conjugador_Blazor.Data
     {
         public bool Equals(Nota x, Nota y)
         {
-            return x.IdNotaAgrupada == y.IdNotaAgrupada;
+            return x.IdNota == y.IdNota;
         }
 
         // If Equals() returns true for a pair of objects 

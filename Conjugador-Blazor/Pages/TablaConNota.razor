@@ -9,7 +9,7 @@
     <div class="uk-width-expand">
         @if ((nota.IdNota >= 1000 && nota.IdNota <= 4999) || (nota.IdNota >= 6000 && nota.IdNota <= 7999))
         {
-            <span @onclick="e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>
+            <span class="note-description @(IsLoading ? "loading" : "")"@onclick="e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>
         }
         else
         {
@@ -26,6 +26,7 @@
     [Parameter] public ConjugadorService conjugador { get; set; }
     [Parameter] public EventCallback<int> OnCheckboxChange { get; set; }
 
+    private bool IsLoading { get; set; } = false;
     private List<string> verbosConNota { get; set; }
 }
 
@@ -37,15 +38,17 @@
 
     private async void GetVerbosConNota(int idNota, string tituloNota)
     {
-        List<string> res = await conjugador.GetVerbosConNotaAsync(idNota);
-        if (verbosConNota.Count == res.Count && verbosConNota.All(resultado => res.Contains(resultado)))
+        IsLoading = true;
+        if (verbosConNota.Count > 0)
         {
             verbosConNota.Clear();
         }
         else
         {
+        List<string> res = await conjugador.GetVerbosConNotaAsync(idNota);
             verbosConNota = res;
         }
+        IsLoading = false;
         StateHasChanged();
     }
 }

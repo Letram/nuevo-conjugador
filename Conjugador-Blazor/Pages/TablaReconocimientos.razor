@@ -8,14 +8,14 @@
 @using Data
 @using Microsoft.AspNetCore.Html
 @using System.Globalization
-@using System.Collections.Concurrent 
+@using System.Collections.Concurrent
 @inject IStringLocalizer<TablaReconocimientos> _localizer
 @inject AppState state
 
 @implements IDisposable
 
-<TablaCanonica infos="infoArr"></TablaCanonica>
-
+@*<TablaCanonica infos="infoArr"></TablaCanonica>
+<TablaResultadoReconocimientos reconocimientos="reconocimientos"></TablaResultadoReconocimientos>*@
 @if (reconocimientos.Count > 0)
 {
     <header id="verb_name">
@@ -24,7 +24,7 @@
         </h1>
         @if (notas.Count > 0)
         {
-            <p class="uk-text-meta uk-text-center" style="cursor: pointer;" id="same_conjugation" @onclick="e => GetVerbosMismaconjugacion(notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).IdNota, notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)">
+            <p class="uk-text-meta uk-text-center @(IsLoading ? "loading" : "")" style="cursor: pointer;" id="same_conjugation" @onclick="e => GetVerbosMismaconjugacion(notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).IdNota, notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)">
                 @((MarkupString)notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)
             </p>
         }
@@ -44,30 +44,6 @@
             </div>
         }
     </div>
-    <table class="uk-table">
-        <thead>
-            <tr>
-                @foreach (string header in reconocimientoHeaders)
-                {
-                    <th>@header</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Reconocimiento reconocimiento in reconocimientos)
-            {
-                <tr>
-                    <td>@reconocimiento.FormaCanonica.</td>
-                    <td>@reconocimiento.Frecuencia</td>
-                    <td>@reconocimiento.IdFlexion</td>
-                    <td>@reconocimiento.IdFormaCanonica</td>
-                    <td>@reconocimiento.Prefijos</td>
-                    <td>@reconocimiento.Pronombres</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <hr />
     <div class="uk-margin uk-card uk-card-default uk-card-body notes">
         <div class="uk-flex uk-flex-between card-heading">
             <h3 class="uk-card-title">
@@ -136,6 +112,7 @@ else
 @code{
 
     [Parameter] public string searchText { get; set; }
+    [Parameter] public EventCallback<string> onSearchDone { get; set; }
 
     private LematizadorService _lematizador { get; set; }
     private ConjugadorService _conjugador { get; set; }
@@ -167,16 +144,9 @@ else
     //Para la lista con la misma conjugacion
     private List<string> resultadosConjugacion { get; set; }
     private string tituloConjugacion { get; set; }
+    private bool IsLoading { get; set; } = false;
 
-    public string[] reconocimientoHeaders =
-    {
-            "Forma canónica",
-            "Frecuencia",
-            "Código de flexión",
-            "Código de forma canónica",
-            "Prefijos",
-            "Pronombres"
-        };
+
 
 
 
@@ -221,6 +191,8 @@ else
         noTieneCodigo = true;
         _selectedIndex = 0;
         reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
+        resultadosConjugacion.Clear();
+        tituloConjugacion = "";
         if (reconocimientos.Count > 0)
         {
             //Hacer las llamadas en paralelo para un array lo encontré en este enlace
@@ -242,8 +214,9 @@ else
             esVerbo = false;
             similares = await _corrector.GetSimilaresAsync(verb);
             sugerencias = await _corrector.GetSugerenciasAsync(verb);
+            StateHasChanged();
         }
-        StateHasChanged();
+        await onSearchDone.InvokeAsync("La búsqueda ha terminado");
     }
 
     public async Task GetDataFromSelectedIndex(int index)
@@ -439,17 +412,19 @@ else
 
     private async void GetVerbosMismaconjugacion(int conjugacion, string titulo)
     {
-        List<string> res = await _conjugador.GetVerbosConNotaAsync(conjugacion);
-        if (resultadosConjugacion.Count == res.Count && resultadosConjugacion.All(resultado => res.Contains(resultado)))
+        IsLoading = true;
+        if (resultadosConjugacion.Count > 0)
         {
             tituloDeLaNota = "";
             resultadosConjugacion.Clear();
         }
         else
         {
+            List<string> res = await _conjugador.GetVerbosConNotaAsync(conjugacion);
             tituloConjugacion = titulo;
             resultadosConjugacion = res;
         }
+        IsLoading = false;
         StateHasChanged();
     }
 

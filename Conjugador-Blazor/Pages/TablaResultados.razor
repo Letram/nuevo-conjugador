@@ -1,7 +1,7 @@
 ﻿@using Data
 
 @inject AppState state
-
+ 
 @implements IDisposable
 
 @if (listOfResults.Count > 0)
@@ -13,7 +13,7 @@
             {
                 string url = "/conjugador/" + result;
                 <div style="height:fit-content;">
-                    <NavLink href=@url>@result</NavLink>
+                    <NavLink href=@url Match="NavLinkMatch.All">@result</NavLink>
                 </div>
             }
         </div>
@@ -43,5 +43,4 @@
     {
         StateHasChanged();
     }
-
 }

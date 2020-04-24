@@ -16,18 +16,19 @@
     </header>
     <div class="form-container uk-flex uk-flex-column uk-flex-middle">
         <span class="input-container">
-            <input type="text" name="verb" id="form_verb" @bind="searchInput" />
+            <input type="text" name="verb" id="form_verb" @bind-value="searchInput" />
         </span>
-        <button type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick="async e => await Search()">@_localizer.WithCulture(state.getCurrentCulture())["consultar"].Value</button>
+        <button disabled="@IsLoading" type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick:preventDefault @onclick:stopPropagation @onclick=@(async e => await Search()) >@_localizer.WithCulture(state.getCurrentCulture())["consultar"].Value</button>
     </div>
-    <h1>Times fired: @counter</h1>
 </div>
 <hr>
 <hr>
 <div class="uk-container" id="data_container">
     @*<button @onclick="e => CambiarIdioma()">Boton para cambiar idioma (experimental)</button>*@
-
-    <TablaReconocimientos @ref="tablaReconocimientos" searchText="@navigatableSearchInput"></TablaReconocimientos>
+    <div class="loader @(IsLoading ? "" : "hide")">
+        <i class="fa fa-spinner"></i>
+    </div>
+    <TablaReconocimientos @ref="tablaReconocimientos" searchText="@navigatableSearchInput" onSearchDone="OnSearchDone"></TablaReconocimientos>
 </div>
 @code{
     private LematizadorService _lematizador { get; set; }
@@ -35,6 +36,7 @@
     public string navigatableSearchInput { get; set; }
     public TablaReconocimientos tablaReconocimientos { get; set; }
     private int counter { get; set; }
+    private bool IsLoading = false;
 }
 
 @functions{
@@ -43,6 +45,8 @@
         _lematizador = new LematizadorService();
 
         state.OnChange += OnCultureChange;
+
+        base.OnInitialized();
     }
 
     public void Dispose()
@@ -50,16 +54,20 @@
         state.OnChange -= OnCultureChange;
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override Task OnParametersSetAsync()
     {
         if (searchInput != null) Search();
+        return base.OnParametersSetAsync();
     }
 
     private async Task Search()
     {
-        counter = counter + 1;
-        navigatableSearchInput = searchInput;
-        await tablaReconocimientos.SearchVerb(searchInput);
+        if (searchInput != null && !searchInput.Equals(""))
+        {
+            IsLoading = true;
+            navigatableSearchInput = searchInput;
+            await tablaReconocimientos.SearchVerb(searchInput);
+        }
     }
 
     private void CambiarIdioma()
@@ -77,5 +85,10 @@
     private void OnCultureChange()
     {
         StateHasChanged();
+    }
+
+    private void OnSearchDone()
+    {
+        IsLoading = false;
     }
 }

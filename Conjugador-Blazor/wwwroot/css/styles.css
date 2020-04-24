@@ -46,6 +46,22 @@
   #verb_name #same_conjugation > font b {
     font-weight: 600 !important; }
 
+#verb_name #same_conjugation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  white-space: pre; }
+  #verb_name #same_conjugation:after {
+    font-family: "FontAwesome";
+    content: '\f110';
+    font-size: 2rem;
+    display: none;
+    margin: 0 0.2rem;
+    animation: spin 1.2s linear infinite; }
+  #verb_name #same_conjugation.loading:after {
+    display: inline-block; }
+
 #results .uk-card {
   padding: 0;
   margin: 0.2rem;
@@ -112,6 +128,17 @@
   display: block;
   padding: 0.2rem 0; }
 
+#data_container .notes .note-description:after {
+  font-family: "FontAwesome";
+  content: '\f110';
+  font-size: 1rem;
+  display: none;
+  margin: 0 0.2rem;
+  animation: spin 1.2s linear infinite; }
+
+#data_container .notes .note-description.loading:after {
+  display: inline-block; }
+
 #data_container .tabla-resultados {
   overflow-y: scroll;
   max-height: 20rem;
@@ -173,3 +200,38 @@
 
 #data_container .uk-subnav-pill .uk-active[data-color="red"] a {
   background-color: #f0506e; }
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  background: white;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  transition: 0.25s ease-in-out; }
+  .loader i {
+    font-size: 10rem;
+    animation: spin 1.2s linear infinite; }
+
+.hide {
+  opacity: 0;
+  z-index: -1; }
+
+/* ANIMACIONES */
+@keyframes breathe {
+  0% {
+    transform: scale(0.2); }
+  50% {
+    transform: scale(1); }
+  100% {
+    transform: scale(0.2); } }
+
+@keyframes spin {
+  0% {
+    transform: rotateZ(0); }
+  100% {
+    transform: rotateZ(360deg); } }

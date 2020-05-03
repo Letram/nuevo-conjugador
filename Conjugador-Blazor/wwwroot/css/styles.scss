@@ -120,9 +120,31 @@ $media_xl: 1600px;
 }
 
 #data_container {
-    #verb_acknowledgements {
-        li > p::first-letter {
-            text-transform: capitalize;
+    #acknowledgements_card {
+        #verb_acknowledgements {
+            li > p::first-letter {
+                text-transform: capitalize;
+            }
+
+            span {
+                font-weight: bold;
+            }
+        }
+
+        .verb_categories {
+            p {
+                margin: 0;
+            }
+
+            i {
+                &.green {
+                    color: green;
+                }
+
+                &.red {
+                    color: red;
+                }
+            }
         }
     }
 
@@ -232,24 +254,6 @@ $media_xl: 1600px;
         max-height: 20rem;
         justify-content: center;
 
-        @media screen and (min-width: $media_s) {
-            max-height: 20rem;
-            margin-left: 0.1rem;
-            margin-right: 0.1rem;
-        }
-
-        @media screen and (min-width: $media_m) {
-            max-height: 30rem;
-            margin-left: 0.2rem;
-            margin-right: 0.2rem;
-        }
-
-        @media screen and (min-width: $media_l) {
-            max-height: 40rem;
-            margin-left: 0.3rem;
-            margin-right: 0.3rem;
-        }
-
         div {
             border: 1px solid rgb(128, 128, 128);
             border-radius: 4px;
@@ -335,10 +339,10 @@ $media_xl: 1600px;
 
 .loader {
     display: flex;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     position: absolute;
     background: white;
     z-index: 1;
@@ -346,7 +350,9 @@ $media_xl: 1600px;
     right: 0;
     transition: 0.25s ease-in-out;
 
-    i{
+    i {
+        position: absolute;
+        top: 10%;
         font-size: 10rem;
         animation: spin 1.2s linear infinite;
     }
@@ -355,6 +361,130 @@ $media_xl: 1600px;
 .hide {
     opacity: 0;
     z-index: -1;
+}
+
+.suggestions {
+    padding: 0 20%;
+}
+
+.element_suggested {
+    padding: 0.15rem 0.25rem;
+    border: 1px solid #151515;
+    border-radius: 4px;
+    color: #151515;
+    cursor: pointer;
+    transition: 0.25s ease-in;
+
+    &:hover {
+        color: white;
+        background: #151515;
+    }
+}
+
+.offcanvas-btn {
+    padding: 2rem 0.15rem;
+    position: fixed;
+    top: 50%;
+    cursor: pointer;
+    color: #333;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    border-right: 1px solid #333;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    z-index: 1;
+}
+
+.mod-width {
+    width: 50%;
+    left: -50%;
+
+    .sidebar-data-container {
+        display: grid;
+        grid-gap: 1rem;
+        grid-template-columns: 1fr;
+
+        div {
+            .app {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 0.25rem;
+                border-radius: 5px;
+                transition: 0.25s ease-in;
+
+                &:hover {
+                    background: black;
+                }
+            }
+
+            .source {
+                padding: 0.15rem 0.25rem;
+                border-radius: 5px;
+                transition: 0.25s ease-in;
+
+                &:hover {
+                    background: black;
+                }
+            }
+        }
+    }
+}
+
+/* MEDIA QUERIES */
+@media screen and (min-width: $media_s) {
+    .mod-width {
+        .sidebar-data-container {
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+
+    .tabla-resultados {
+        max-height: 20rem;
+        margin-left: 0.1rem;
+        margin-right: 0.1rem;
+    }
+
+    .suggestions {
+        padding: 0 5%;
+    }
+}
+
+@media screen and (min-width: $media_m) {
+    .tabla-resultados {
+        max-height: 30rem;
+        margin-left: 0.2rem;
+        margin-right: 0.2rem;
+    }
+
+    .suggestions {
+        padding: 0 10%;
+    }
+
+    .mod-width {
+
+        .sidebar-data-container {
+
+            div {
+                .app {
+                    flex-direction: row;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $media_l) {
+    .tabla-resultados {
+        max-height: 40rem;
+        margin-left: 0.3rem;
+        margin-right: 0.3rem;
+    }
+
+    .suggestions {
+        padding: 0 20%;
+    }
 }
 
 

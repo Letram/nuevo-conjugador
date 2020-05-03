@@ -117,6 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Antecopreterito" xml:space="preserve">
+    <value>Pluperfect</value>
+  </data>
+  <data name="Antefuturo" xml:space="preserve">
+    <value>Future perfect</value>
+  </data>
+  <data name="Antepospreterito" xml:space="preserve">
+    <value>Conditional perfect</value>
+  </data>
+  <data name="Antepresente" xml:space="preserve">
+    <value>Antecedent</value>
+  </data>
+  <data name="Antepreterito" xml:space="preserve">
+    <value>Past anterior</value>
+  </data>
+  <data name="Condicional_comp" xml:space="preserve">
+    <value>Compound conditional</value>
+  </data>
   <data name="Condicional_simple" xml:space="preserve">
     <value>Conditional</value>
   </data>
@@ -125,6 +143,9 @@
   </data>
   <data name="Futuro" xml:space="preserve">
     <value>Future</value>
+  </data>
+  <data name="Futuro_comp" xml:space="preserve">
+    <value>Compound future</value>
   </data>
   <data name="Futuro_simple" xml:space="preserve">
     <value>-</value>
@@ -141,10 +162,19 @@
   <data name="Preterito" xml:space="preserve">
     <value>Simple past</value>
   </data>
+  <data name="Preterito_anterior" xml:space="preserve">
+    <value>Past perfect</value>
+  </data>
   <data name="Preterito_imperfecto" xml:space="preserve">
     <value>Imperfect</value>
   </data>
+  <data name="Preterito_perfecto_comp" xml:space="preserve">
+    <value>Compound present perfect</value>
+  </data>
   <data name="Preterito_perfecto_simple" xml:space="preserve">
     <value>Preterite</value>
+  </data>
+  <data name="Preterito_pluscuamperfecto" xml:space="preserve">
+    <value>Plusquamperfect</value>
   </data>
 </root>

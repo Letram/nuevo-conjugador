@@ -1,0 +1,98 @@
+﻿@inject IStringLocalizer<OffCanvas> _localizer 
+
+<span class="offcanvas-btn" uk-toggle="target: #offcanvas-slide">
+    <i class="fa fa-chevron-right"></i>
+</span>
+<div id="offcanvas-slide" uk-offcanvas="overlay: true">
+    <div class="uk-offcanvas-bar mod-width">
+
+        <button class="uk-offcanvas-close" type="button" uk-close></button>
+        <div class="sidebar-data-container">
+            <div>
+                <h2>@_localizer["sources"]</h2>
+                <div class="sources">
+                    <a href="http://www.rae.es/obras-academicas/gramatica/nueva-gramatica" target="_blank">
+                        <div class="source">
+                            <h4>NGLE-RAE-2009</h4>
+                            <p class="uk-text-meta uk-margin-remove-top additional_info">
+                                Nueva gramática de la lengua española. Espasa Calpe (2009)
+                            </p>
+                        </div>
+                    </a>
+                    <a href="http://www.verbolog.com/entrada.htm" target="_blank">
+                        <div class="source">
+                            <h4>BD-IVH-2006</h4>
+                            <p class="uk-text-meta uk-margin-remove-top additional_info">
+                                Base de datos del Instituto de Verbología Hispánica - versión 13.0 (2006)
+                            </p>
+                        </div>
+                    </a>
+                    <a href="http://www.rae.es/obras-academicas/diccionarios/diccionario-panhispanico-de-dudas"
+                       target="_blank">
+                        <div class="source">
+                            <h4>DPD-RAE-2005</h4>
+                            <p class="uk-text-meta uk-margin-remove-top additional_info">
+                                Diccionario panhispánico de dudas de la Real Academia Española - 1ª edición (2005)
+                            </p>
+                        </div>
+                    </a>
+                    <a href="http://www.rae.es/obras-academicas/diccionarios/diccionario-de-la-lengua-espanola"
+                       target="_blank">
+                        <div class="source">
+                            <h4>DLE-RAE-2001</h4>
+                            <p class="uk-text-meta uk-margin-remove-top additional_info">
+                                Diccionario de la lengua española de la Real Academia Española - 22ª edición (2001)
+                            </p>
+                        </div>
+                    </a>
+                    <a href="http://dle.rae.es/" target="_blank">
+                        <div class="source">
+                            <h4>DLE-RAE-WEB</h4>
+                            <p class="uk-text-meta uk-margin-remove-top additional_info">
+                                Diccionario de la lengua española de la Real Academia Española - en línea
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h3>@_localizer["apps"]</h3>
+                <div class="app-container">
+                    <a href="">
+
+                        <div class="app">
+                            <img src="https://iatext.ulpgc.es/sites/default/files/styles/thumbnail/public/logo_paramText300x300.png?itok=UGntK5kj"
+                                 alt="">
+                            <p>ParamText TIP</p>
+                        </div>
+                    </a>
+                    <a href="">
+
+                        <div class="app">
+                            <img src="https://iatext.ulpgc.es/sites/default/files/styles/thumbnail/public/logo%20Palabras%20300.png?itok=NFtGKleg"
+                                 alt="">
+                            <p>Palabras TIP</p>
+                        </div>
+                    </a>
+                    <a href="">
+
+                        <div class="app">
+                            <img src="https://iatext.ulpgc.es/sites/default/files/styles/thumbnail/public/logo_silabas300x300.png?itok=B-Ygh3me"
+                                 alt="">
+                            <p>Silabeador TIP</p>
+                        </div>
+                    </a>
+                    <a href="">
+
+                        <div class="app">
+                            <img src="https://iatext.ulpgc.es/sites/default/files/styles/thumbnail/public/logo_numeros300X300.png?itok=fjHPIlwM"
+                                 alt="">
+                            <p>Números TIP</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <hr />
+    </div>
+</div>

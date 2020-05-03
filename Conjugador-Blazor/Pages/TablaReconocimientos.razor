@@ -9,22 +9,25 @@
 @using Microsoft.AspNetCore.Html
 @using System.Globalization
 @using System.Collections.Concurrent
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
+@inject ConjugacionesHaber _conjugacionesHaber
+
 @inject IStringLocalizer<TablaReconocimientos> _localizer
-@inject AppState state
-
-@implements IDisposable
-
+@inject NavigationManager _navigationManager
 @*<TablaCanonica infos="infoArr"></TablaCanonica>
-<TablaResultadoReconocimientos reconocimientos="reconocimientos"></TablaResultadoReconocimientos>*@
+    <TablaResultadoReconocimientos reconocimientos="reconocimientos"></TablaResultadoReconocimientos>*@
+
 @if (reconocimientos.Count > 0)
 {
     <header id="verb_name">
         <h1 class="uk-text-center">
-            @((MarkupString)string.Format(_localizer.WithCulture(state.getCurrentCulture())["conjugacion_verbo"].Value, reconocimientos[_selectedIndex].FormaCanonica))
+            @((MarkupString)string.Format(_localizer["conjugacion_verbo"].Value, reconocimientos[_selectedIndex].FormaCanonica))
         </h1>
         @if (notas.Count > 0)
         {
-            <p class="uk-text-meta uk-text-center @(IsLoading ? "loading" : "")" style="cursor: pointer;" id="same_conjugation" @onclick="e => GetVerbosMismaconjugacion(notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).IdNota, notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)">
+            <p class="uk-text-meta uk-text-center @(IsLoading ? "loading" : "")" style="cursor: pointer;" id="same_conjugation" @onclick="async e => GetVerbosMismaconjugacion(notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).IdNota, notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)">
                 @((MarkupString)notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)
             </p>
         }
@@ -32,18 +35,19 @@
     <hr />
     <TablaResultados listOfResults="resultadosConjugacion" titleOfNote="@tituloConjugacion"></TablaResultados>
 
-    <div id="results" class="uk-child-width-expand uk-grid-column-medium" uk-grid>
-        @foreach (Reconocimiento reconocimiento in reconocimientos)
+    <div id="results" class="uk-child-width-expand uk-grid-column-medium" style="margin: 0.5rem 0;" uk-grid>
+        @foreach (ReconocimientoInfoCanonica reconocimientoInfoCanonica in reconocimientoInfoCanonicas)
         {
-            int index = reconocimientos.IndexOf(reconocimiento);
+            int index = reconocimientoInfoCanonicas.IndexOf(reconocimientoInfoCanonica);
             <div id="@index" class="uk-card uk-card-small uk-card-default @((_selectedIndex == index) ? "selected" : "")"
                  @onclick="e => GetDataFromSelectedIndex(index)">
                 <p class="uk-text-center">
-                    @string.Format(_localizer.WithCulture(state.getCurrentCulture())["verbo_seleccion"], searchText, reconocimiento.FormaCanonica)
+                    @string.Format(_localizer["verbo_seleccion"], searchText, reconocimientoInfoCanonica.Verbo)
                 </p>
             </div>
         }
     </div>
+    <CajaReconocimientos reconocimientoInfo="reconocimientoInfoCanonicas[_selectedIndex]" verbUserIsLookingFor="@searchText"></CajaReconocimientos>
     <div class="uk-margin uk-card uk-card-default uk-card-body notes">
         <div class="uk-flex uk-flex-between card-heading">
             <h3 class="uk-card-title">
@@ -83,11 +87,18 @@
             }
             else
             {
-                <h5 class="uk-text-meta uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["no_notas"].Value</h5>
+                <h5 class="uk-text-meta uk-text-center">@_localizer["no_notas"]</h5>
             }
         </div>
     </div>
-    <TablaModos indicativo="modoIndicativo" subjuntivo="modoSubjuntivo" imperativo="modoImperativo" formasImpersonales="formasImpersonales" notasSeleccionadas="selectedNotas" noTieneCodigo="noTieneCodigo"></TablaModos>
+    <TablaModos indicativo="modoIndicativo"
+                subjuntivo="modoSubjuntivo"
+                imperativo="modoImperativo"
+                indicativoComp="modoIndicativoComp"
+                subjuntivoComp="modoSubjuntivoComp"
+                formasImpersonales="formasImpersonales"
+                notasSeleccionadas="selectedNotas"
+                noTieneCodigo="noTieneCodigo"></TablaModos>
     @*<Conjugaciones conjugaciones="conjugaciones"></Conjugaciones>*@
 }
 else
@@ -95,16 +106,23 @@ else
     <header>
         @if (!esVerbo)
         {
-            <h3 class="uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["no_verbo"].Value</h3>
+            <h3 class="uk-text-center">@_localizer["no_verbo"].Value</h3>
             <div>
-                <h5>@_localizer.WithCulture(state.getCurrentCulture())["sugerencias"].Value @(string.Join(", ", sugerencias.ToArray()))</h5>
-                <h5>@_localizer.WithCulture(state.getCurrentCulture())["similares"].Value @(string.Join(", ", similares.ToArray()))</h5>
+                <h5>@_localizer["sugerencias"]</h5>
+                <div class="suggestions" uk-grid>
+                    @foreach (string sugerencia in sugerencias)
+                    {
+                        string redirectUrl = "conjugador/" + sugerencia;
+                        <div>
+                            <span class="element_suggested" @onclick=@(e => navigateTo(redirectUrl))>@sugerencia</span>
+                        </div>
+                    }
+                </div>
             </div>
         }
         else
         {
-            <h3 class="uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["empezar"].Value</h3>
-
+            <h3 class="uk-text-center">@_localizer["empezar"].Value</h3>
         }
     </header>
 }
@@ -120,7 +138,7 @@ else
     private List<Reconocimiento> reconocimientos { get; set; }
     private List<InfoConjugacion> conjugaciones { get; set; }
     private ConcurrentSet<InfoCanonica> infoArr { get; set; } = new ConcurrentSet<InfoCanonica>(new InfoCanonicaComparer());
-
+    private List<ReconocimientoInfoCanonica> reconocimientoInfoCanonicas { get; set; } = new List<ReconocimientoInfoCanonica>();
     private List<Nota> notas { get; set; }
     private List<int> selectedNotas { get; set; }
 
@@ -129,13 +147,14 @@ else
     private ModoVerbo modoIndicativo { get; set; }
     private ModoVerbo modoImperativo { get; set; }
     private ModoVerbo modoSubjuntivo { get; set; }
+    private ModoVerbo modoIndicativoComp { get; set; }
+    private ModoVerbo modoSubjuntivoComp { get; set; }
     private bool noTieneCodigo { get; set; } = true;
     private int _selectedIndex { get; set; }
 
     private bool esVerbo { get; set; } = true;
 
     private List<string> sugerencias { get; set; }
-    private List<string> similares { get; set; }
 
     //Para el buscador de las notas
     private List<string> resultadosNota { get; set; }
@@ -145,18 +164,12 @@ else
     private List<string> resultadosConjugacion { get; set; }
     private string tituloConjugacion { get; set; }
     private bool IsLoading { get; set; } = false;
-
-
-
-
-
 }
 @functions{
 
     protected override void OnInitialized()
     {
         reconocimientos = new List<Reconocimiento>();
-        similares = new List<string>();
         sugerencias = new List<string>();
         _lematizador = new LematizadorService();
         _conjugador = new ConjugadorService();
@@ -168,52 +181,56 @@ else
         tituloDeLaNota = "";
         resultadosConjugacion = new List<string>();
         tituloConjugacion = "";
-        state.OnChange += OnCultureChange;
-    }
-
-    public void Dispose()
-    {
-        state.OnChange -= OnCultureChange;
-    }
-
-    private void OnCultureChange()
-    {
-        StateHasChanged();
     }
 
     public async Task SearchVerb(string verb)
     {
         if (verb == "" || verb == null) return;
-
         searchText = verb;
-        selectedNotas.Clear();
-        notas.Clear();
+        selectedNotas = new List<int>();
+        notas = new List<Nota>();
         noTieneCodigo = true;
         _selectedIndex = 0;
-        reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
-        resultadosConjugacion.Clear();
+        resultadosConjugacion = new List<string>();
         tituloConjugacion = "";
-        if (reconocimientos.Count > 0)
+
+        //consigo todos los Reconocimientos
+        reconocimientos = await _lematizador.GetReconocimientosAsync(verb);
+        reconocimientos = reconocimientos.Distinct(new ReconocimientoComparer()).ToList();
+
+        //Consigo todas las InfoCanonicas
+        //Hacer las llamadas en paralelo para un array lo encontré en este enlace
+        //https://stackoverflow.com/questions/15136542/parallel-foreach-with-asynchronous-lambda
+        infoArr = new ConcurrentSet<InfoCanonica>(new InfoCanonicaComparer());
+        var tasks = reconocimientos.Select(async reconocimiento =>
         {
-            //Hacer las llamadas en paralelo para un array lo encontré en este enlace
-            //https://stackoverflow.com/questions/15136542/parallel-foreach-with-asynchronous-lambda
-            infoArr.Clear();
-            var tasks = reconocimientos.Select(async reconocimiento =>
-            {
-                var infoCanonicaOfReconocimiento = await _lematizador.GetInfoCanonicaAsync(reconocimiento.IdFormaCanonica);
-                infoArr.Add(infoCanonicaOfReconocimiento);
-            });
-            var count = reconocimientos.Count;
-            var count_2 = tasks.Count();
-            await Task.WhenAll(tasks);
+            var infoCanonicaOfReconocimiento = await _lematizador.GetInfoCanonicaAsync(reconocimiento.IdFormaCanonica);
+            infoArr.Add(infoCanonicaOfReconocimiento);
+        });
+        await Task.WhenAll(tasks);
+
+        //Creo los objetos ReconocimientoInfoCanonicas de cada verbo que salga en el reconocimiento
+        reconocimientoInfoCanonicas = new List<ReconocimientoInfoCanonica>();
+        foreach (string verbo in reconocimientos.Select(rec => rec.FormaCanonica).Distinct())
+        {
+            ReconocimientoInfoCanonica auxElement = new ReconocimientoInfoCanonica();
+            auxElement.Verbo = verbo;
+            auxElement.InfoCanonicas = infoArr.Where(info => info.FormaCanonica.Equals(verbo)).ToList();
+            auxElement.Reconocimientos = reconocimientos.Where(rec => rec.FormaCanonica.Equals(verbo)).ToList();
+
+            reconocimientoInfoCanonicas.Add(auxElement);
+        }
+
+        if (reconocimientoInfoCanonicas.Count > 0)
+        {
             await GetDataFromSelectedIndex(_selectedIndex);
         }
         else
         {
             //No es un verbo o no está bien escrito
             esVerbo = false;
-            similares = await _corrector.GetSimilaresAsync(verb);
             sugerencias = await _corrector.GetSugerenciasAsync(verb);
+            if (sugerencias == null) sugerencias = new List<string>();
             StateHasChanged();
         }
         await onSearchDone.InvokeAsync("La búsqueda ha terminado");
@@ -222,19 +239,23 @@ else
     public async Task GetDataFromSelectedIndex(int index)
     {
         _selectedIndex = index;
-        selectedNotas.Clear();
-        notas.Clear();
+        selectedNotas = new List<int>();
+        notas = new List<Nota>();
         noTieneCodigo = true;
         //La manera de hacerlo todo en paralelo para reducir tiempos de espera fue sacada del siguiente enlace
         //https://stackoverflow.com/questions/17197699/awaiting-multiple-tasks-with-different-results
-        Task<List<InfoConjugacion>> taskConjugaciones = _conjugador.GetInfoConjugacion(reconocimientos[_selectedIndex].IdFormaCanonica);
-        Task<List<string>> taskDefiniciones = _conjugador.GetDefinicionesAsync(reconocimientos[_selectedIndex].IdFormaCanonica);
+        /*
+        Task<List<InfoConjugacion>> taskConjugaciones = _conjugador.GetInfoConjugacion(reconocimientoInfoCanonicas[_selectedIndex].GetIdCanonicaConjugacion());
+        Task<List<string>> taskDefiniciones = _conjugador.GetDefinicionesAsync(reconocimientoInfoCanonicas[_selectedIndex].GetIdCanonicaConjugacion());
 
         await Task.WhenAll(taskConjugaciones, taskDefiniciones);
 
         conjugaciones = await taskConjugaciones;
         List<string> definiciones = await taskDefiniciones;
+        */
         //---
+
+        conjugaciones = await GetInfoConjugaciones(reconocimientoInfoCanonicas[_selectedIndex]);
         if (conjugaciones != null)
         {
             formasImpersonales = new String[3];
@@ -244,6 +265,10 @@ else
             modoIndicativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 57).ToList(), "Indicativo");
             modoSubjuntivo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 60 && conjugacion.IdFlexion <= 87).ToList(), "Subjuntivo");
             modoImperativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 90 && conjugacion.IdFlexion <= 98).ToList(), "Imperativo");
+
+            modoIndicativoComp = GetModoCompuesto(conjugaciones[1], "Indicativo");
+            modoSubjuntivoComp = GetModoCompuesto(conjugaciones[1], "Subjuntivo");
+
             InfoConjugacion infinitivo = conjugaciones.Where(conjugacion => conjugacion.IdFlexion == 1).First();
             bool aux = conjugaciones.Any(conj => conj.IdCategorias.Contains(3002));
             noTieneCodigo = !aux;
@@ -354,6 +379,25 @@ else
         return result;
     }
 
+    private ModoVerbo GetModoCompuesto(InfoConjugacion participio, string modo)
+    {
+        List<ConjugacionVerbo> listaConjugaciones = new List<ConjugacionVerbo>();
+        int[] fromTo = new int[] { };
+        if (modo.Equals("Indicativo")) fromTo = new int[] { 0, 4 };
+        else fromTo = new int[] { 5, 7 };
+        for (int i = fromTo[0]; i <= fromTo[1]; i++)
+        {
+            listaConjugaciones.Add(GetConjugacionVerboForCompoundForm(
+                _conjugacionesHaber.NombresConjugacionesVerboHaber[i].ToArray(),
+                participio,
+                _conjugacionesHaber.ConjugacionVerboHaber[i])
+            );
+        }
+
+        ModoVerbo result = new ModoVerbo(modo, listaConjugaciones);
+        return result;
+    }
+
     private ConjugacionVerbo GetConjugacionFromInfoConjugacion_2
             (
                 string[] nombreConjugacion,
@@ -397,6 +441,43 @@ else
         return conjugacion;
     }
 
+    private ConjugacionVerbo GetConjugacionVerboForCompoundForm(string[] nombreConjugacion, InfoConjugacion participio, List<List<string>> conjugacionHaber)
+    {
+        ConjugacionVerbo conjugacion = new ConjugacionVerbo();
+
+        conjugacion.nombreConjugacion = nombreConjugacion;
+
+        conjugacion.conjEsp = GetListOfListOfInfoConjugacionForCompound(participio, conjugacionHaber);
+        conjugacion.conjCan = GetListOfListOfInfoConjugacionForCompound(participio, conjugacionHaber);
+        conjugacion.conjFor = GetListOfListOfInfoConjugacionForCompound(participio, conjugacionHaber);
+        conjugacion.conjVos = GetListOfListOfInfoConjugacionForCompound(participio, conjugacionHaber);
+
+        /*
+         * Aquí iría la modificación de los casos especiales de las conjugaciones canaria, formal y con voseo
+         * */
+
+        return conjugacion;
+    }
+
+    private List<List<InfoConjugacion>> GetListOfListOfInfoConjugacionForCompound(InfoConjugacion participio, List<List<string>> conjugacionHaber)
+    {
+        //el pretérito pluscuamperfecto tiene dos formas, por lo que las formas del verbo haber tienen que estar en una lista.
+        List<List<InfoConjugacion>> conjugacionesComoInfoConjugacion = new List<List<InfoConjugacion>>();
+        foreach (List<string> conjugacionDeHaber in conjugacionHaber)
+        {
+            List<InfoConjugacion> conjugacionIndividualInfoConjugacion = new List<InfoConjugacion>();
+            foreach (string formaDeHaber in conjugacionDeHaber)
+            {
+                InfoConjugacion infoConjugacion = new InfoConjugacion();
+                infoConjugacion.IdNotas = (participio.IdNotas != null) ? participio.IdNotas.Select(nota => nota).ToList() : null;
+                infoConjugacion.Forma = $"{formaDeHaber} {participio.Forma.ToLower()}";
+                conjugacionIndividualInfoConjugacion.Add(infoConjugacion);
+            }
+            conjugacionesComoInfoConjugacion.Add(conjugacionIndividualInfoConjugacion);
+        }
+        return conjugacionesComoInfoConjugacion;
+    }
+
     private void ManageListOfNotesWithNoteId(int noteId)
     {
         if (selectedNotas.Contains(noteId))
@@ -407,7 +488,6 @@ else
         {
             selectedNotas.Add(noteId);
         }
-        StateHasChanged();
     }
 
     private async void GetVerbosMismaconjugacion(int conjugacion, string titulo)
@@ -425,11 +505,25 @@ else
             resultadosConjugacion = res;
         }
         IsLoading = false;
-        StateHasChanged();
     }
 
-    private bool HasToHaveCheckbox(int nota)
+    private async Task<List<InfoConjugacion>> GetInfoConjugaciones(ReconocimientoInfoCanonica reconocimientoInfoCanonica)
     {
-        return false;
+        List<InfoConjugacion> aux = null;
+        List<int> ids = reconocimientoInfoCanonica.Reconocimientos.Select(rec => rec.IdFormaCanonica).ToList();
+        int index = 0;
+        while (aux == null && index <= ids.Count - 1)
+        {
+            var listAux = await _conjugador.GetInfoConjugacion(ids[index]);
+            if (listAux != null) aux = listAux;
+            index++;
+        }
+
+        return aux;
+    }
+
+    private void navigateTo(string url)
+    {
+        _navigationManager.NavigateTo(_navigationManager.BaseUri + url, forceLoad: true);
     }
 }

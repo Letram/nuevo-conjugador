@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Conjugador_Blazor.Data;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Conjugador_Blazor
 {
@@ -32,8 +33,10 @@ namespace Conjugador_Blazor
             services.AddRazorPages();
             services.AddServerSideBlazor(options => options.DetailedErrors = true);
 
-            //Añadimos el servicio del estado para poder manejar los eventos
-            services.AddScoped<AppState>();
+            services.AddSingleton<ConjugacionesHaber>();
+
+            ////Añadimos el servicio del estado para poder manejar los eventos
+            //services.AddScoped<AppState>();
 
             //así como lo necesario para admitir la localización
             services.AddLocalization();
@@ -65,9 +68,11 @@ namespace Conjugador_Blazor
             app.UseStaticFiles();
 
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "CultureController",
+                    pattern: "api/{controller=Culture}/{action}");
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

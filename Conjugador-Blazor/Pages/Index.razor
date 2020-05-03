@@ -5,26 +5,29 @@
 @using ConexionLematizador
 @using System.Globalization
 @using Data
-@inject AppState state
-@inject IStringLocalizer<Index> _localizer
 
-@implements IDisposable
+@inject IStringLocalizer<Index> _localizer
+@inject NavigationManager _navigationManager
+
+<OffCanvas></OffCanvas>
 <!-- SEARCH FORM -->
 <div id="search_form" class="uk-container">
     <header>
-        <h1 class="uk-text-center">@_localizer.WithCulture(state.getCurrentCulture())["escribe_verbo"].Value</h1>
+        <h1 class="uk-text-center">@_localizer["escribe_verbo"].Value</h1>
     </header>
     <div class="form-container uk-flex uk-flex-column uk-flex-middle">
         <span class="input-container">
             <input type="text" name="verb" id="form_verb" @bind-value="searchInput" />
         </span>
-        <button disabled="@IsLoading" type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick:preventDefault @onclick:stopPropagation @onclick=@(async e => await Search()) >@_localizer.WithCulture(state.getCurrentCulture())["consultar"].Value</button>
+        <button disabled="@IsLoading" type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick:preventDefault @onclick:stopPropagation @onclick=@(e => OnSearchBtnClicked())>@_localizer["consultar"].Value</button>
     </div>
 </div>
 <hr>
 <hr>
 <div class="uk-container" id="data_container">
     @*<button @onclick="e => CambiarIdioma()">Boton para cambiar idioma (experimental)</button>*@
+    @*<button @onclick="e => SetCulture(es)">Español</button>
+    <button @onclick="e => SetCulture(en)">Inglés</button>*@
     <div class="loader @(IsLoading ? "" : "hide")">
         <i class="fa fa-spinner"></i>
     </div>
@@ -37,26 +40,32 @@
     public TablaReconocimientos tablaReconocimientos { get; set; }
     private int counter { get; set; }
     private bool IsLoading = false;
+    private string es = "es-ES";
+    private string en = "en-US";
+    private bool wantToSearch { get; set; } = false;
+    private string lastSearchInput { get; set; } = "";
 }
 
 @functions{
     protected override void OnInitialized()
     {
         _lematizador = new LematizadorService();
-
-        state.OnChange += OnCultureChange;
-
         base.OnInitialized();
     }
 
-    public void Dispose()
+    protected override async void OnAfterRender(bool firstRender)
     {
-        state.OnChange -= OnCultureChange;
+        if (wantToSearch && !lastSearchInput.Equals(searchInput))
+        {
+            await Search();
+        }
+        base.OnAfterRender(firstRender);
     }
 
     protected override Task OnParametersSetAsync()
     {
-        if (searchInput != null) Search();
+        if (searchInput != null) wantToSearch = true;
+        else wantToSearch = false;
         return base.OnParametersSetAsync();
     }
 
@@ -65,26 +74,28 @@
         if (searchInput != null && !searchInput.Equals(""))
         {
             IsLoading = true;
+            StateHasChanged();
+            lastSearchInput = searchInput;
             navigatableSearchInput = searchInput;
             await tablaReconocimientos.SearchVerb(searchInput);
         }
     }
 
-    private void CambiarIdioma()
+    private void SetCulture(string language)
     {
-        if (state.getCurrentCulture().Equals(new CultureInfo("es")))
-        {
-            state.ChangeCulture(new CultureInfo("en"));
-        }
-        else
-        {
-            state.ChangeCulture(new CultureInfo("es"));
-        }
+        var uri = new Uri(_navigationManager.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        var redirectUri = Uri.EscapeDataString(uri);
+        var query = $"?culture={Uri.EscapeDataString(language)}&" +
+            $"redirectUri={redirectUri}";
+
+        _navigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
     }
 
-    private void OnCultureChange()
+    private void OnSearchBtnClicked()
     {
-        StateHasChanged();
+        if (searchInput != null && !searchInput.Equals(""))
+            _navigationManager.NavigateTo(_navigationManager.BaseUri + "conjugador/" + searchInput);
     }
 
     private void OnSearchDone()

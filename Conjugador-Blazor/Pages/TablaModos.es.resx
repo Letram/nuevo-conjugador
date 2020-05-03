@@ -123,6 +123,9 @@
   <data name="castellano" xml:space="preserve">
     <value>España</value>
   </data>
+  <data name="compuesto" xml:space="preserve">
+    <value>Tiempos compuestos</value>
+  </data>
   <data name="femenino" xml:space="preserve">
     <value>Sujeto femenino</value>
   </data>

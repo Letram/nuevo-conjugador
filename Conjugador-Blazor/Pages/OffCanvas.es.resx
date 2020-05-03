@@ -117,46 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="canario" xml:space="preserve">
-    <value>Canary Islands (ustedes)</value>
+  <data name="apps" xml:space="preserve">
+    <value>Otras aplicaciones</value>
   </data>
-  <data name="castellano" xml:space="preserve">
-    <value>Spanish</value>
-  </data>
-  <data name="compuesto" xml:space="preserve">
-    <value>Compound Tense</value>
-  </data>
-  <data name="femenino" xml:space="preserve">
-    <value>Femenine subject</value>
-  </data>
-  <data name="formal" xml:space="preserve">
-    <value>Formal treatment or common courtesy</value>
-  </data>
-  <data name="frecuencia" xml:space="preserve">
-    <value>Frecuency in CREA</value>
-  </data>
-  <data name="imperativo" xml:space="preserve">
-    <value>Imperative</value>
-  </data>
-  <data name="indicativo" xml:space="preserve">
-    <value>Indicative</value>
-  </data>
-  <data name="negar" xml:space="preserve">
-    <value>Negation</value>
-  </data>
-  <data name="pronominal" xml:space="preserve">
-    <value>Pronominal</value>
-  </data>
-  <data name="simple" xml:space="preserve">
-    <value>Simple Tense</value>
-  </data>
-  <data name="subjuntivo" xml:space="preserve">
-    <value>Subjunctive</value>
-  </data>
-  <data name="todos" xml:space="preserve">
-    <value>All modes</value>
-  </data>
-  <data name="voseo" xml:space="preserve">
-    <value>Rio de la Plata (voseo)</value>
+  <data name="sources" xml:space="preserve">
+    <value>Fuentes consultadas</value>
   </data>
 </root>

@@ -207,6 +207,7 @@
   position: absolute;
   background: white;
   z-index: 1;
+  top: 0;
   left: 0;
   right: 0;
   transition: 0.25s ease-in-out; }
@@ -271,6 +272,34 @@
       .mod-width .sidebar-data-container div .source:hover {
         background: black; }
 
+.footer {
+  background-color: #222;
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 0.5rem 1rem;
+  z-index: 2;
+  position: relative;
+  bottom: 0; }
+  .footer .footer-container, .footer .image-container {
+    height: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    .footer .footer-container p, .footer .image-container p {
+      font-size: 0.7rem;
+      padding: 0;
+      margin: 0; }
+  .footer .image-container img {
+    height: 100%;
+    width: 100%;
+    object-fit: scale-down; }
+
+.first-load {
+  height: 100vh; }
+  .first-load.hide {
+    display: none; }
+
 /* MEDIA QUERIES */
 @media screen and (min-width: 640px) {
   .mod-width .sidebar-data-container {
@@ -280,7 +309,13 @@
     margin-left: 0.1rem;
     margin-right: 0.1rem; }
   .suggestions {
-    padding: 0 5%; } }
+    padding: 0 5%; }
+  .footer {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    height: 4rem; }
+    .footer .image-container img {
+      width: 60%; } }
 
 @media screen and (min-width: 960px) {
   .tabla-resultados {

@@ -25,13 +25,11 @@
 <hr>
 <hr>
 <div class="uk-container" id="data_container">
-    @*<button @onclick="e => CambiarIdioma()">Boton para cambiar idioma (experimental)</button>*@
-    @*<button @onclick="e => SetCulture(es)">Español</button>
-    <button @onclick="e => SetCulture(en)">Inglés</button>*@
     <div class="loader @(IsLoading ? "" : "hide")">
         <i class="fa fa-spinner"></i>
     </div>
     <TablaReconocimientos @ref="tablaReconocimientos" searchText="@navigatableSearchInput" onSearchDone="OnSearchDone"></TablaReconocimientos>
+    <div class="first-load @(isFirstLoad ? "" : "hide")"></div>
 </div>
 @code{
     private LematizadorService _lematizador { get; set; }
@@ -40,6 +38,7 @@
     public TablaReconocimientos tablaReconocimientos { get; set; }
     private int counter { get; set; }
     private bool IsLoading = false;
+    private bool isFirstLoad = true;
     private string es = "es-ES";
     private string en = "en-US";
     private bool wantToSearch { get; set; } = false;
@@ -74,6 +73,7 @@
         if (searchInput != null && !searchInput.Equals(""))
         {
             IsLoading = true;
+            isFirstLoad = false;
             StateHasChanged();
             lastSearchInput = searchInput;
             navigatableSearchInput = searchInput;
@@ -101,5 +101,6 @@
     private void OnSearchDone()
     {
         IsLoading = false;
+        isFirstLoad = false;
     }
 }

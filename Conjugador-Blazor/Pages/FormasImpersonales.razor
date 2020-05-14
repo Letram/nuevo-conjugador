@@ -12,48 +12,63 @@
                         @_localizer["forma_impersonal"].Value
                     </h3>
                     <div>
-                        <button class="uk-button uk-button-text close-btn"
+                        <button class="uk-button close-btn"
                                 uk-toggle="target: #verb_impersonal_simple; animation: uk-animation-fade"
                                 type="button"
                                 onclick="toggle()">
-                            Less
+                            <span uk-icon="icon: chevron-up; ratio: 1.5"></span>
+
                         </button>
                     </div>
                 </div>
-                <div class="uk-grid-divider impersonal" uk-grid>
-                    <div class="uk-width-small">
-                        <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_simple">
-                            <li class="uk-active"><a href="#">@_localizer["infinitivo"].Value</a></li>
-                            <li><a href="#">@_localizer["gerundio"].Value</a></li>
-                            <li><a href="#">@_localizer["participio"].Value</a></li>
-                        </ul>
-                    </div>
-                    <div class="uk-with-expand">
-                        <ul id="impersonal_simple" class="uk-switcher">
-                            <li>
-                                <p>
-                                    @(negar ? "no " + formasImpersonales[0] : formasImpersonales[0])
-                                </p>
-                            </li>
-                            <li>
-                                <p>
-                                    @(negar ? "no " + formasImpersonales[2] : formasImpersonales[2])
-                                </p>
-                            </li>
-                            <li>
-                                <div>
-                                    <ul class="uk-list">
-                                        @{
-                                            string participioAux = formasImpersonales[1].Substring(0, formasImpersonales[1].Length - 1);
-                                            <li><p>@(negar ? "no " + participioAux + "o" : participioAux + "o")</p></li>
-                                            <li><p>@(negar ? "no " + participioAux + "a" : participioAux + "a")</p></li>
-                                            <li><p>@(negar ? "no " + participioAux + "os" : participioAux + "os")</p></li>
-                                            <li><p>@(negar ? "no " + participioAux + "as" : participioAux + "as")</p></li>
-                                        }
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
+                <div class="uk-card-body">
+                    <div id="verb_impersonal_simple" class="uk-grid-divider impersonal" uk-grid>
+                        <div class="uk-width-small">
+                            <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_simple">
+                                <li class="uk-active"><a href="#">@_localizer["infinitivo"].Value</a></li>
+                                <li><a href="#">@_localizer["gerundio"].Value</a></li>
+                                <li><a href="#">@_localizer["participio"].Value</a></li>
+                            </ul>
+                        </div>
+                        <div class="uk-with-expand">
+                            <ul id="impersonal_simple" class="uk-switcher">
+                                <li>
+                                    @foreach (string infinitivo in formasImpersonales[0])
+                                    {
+                                        <p>
+                                            @(negar ? "no " + infinitivo : infinitivo)
+                                        </p>
+                                    }
+                                </li>
+                                <li>
+                                    @foreach (string gerundio in formasImpersonales[2])
+                                    {
+                                        <p>
+                                            @(negar ? "no " + gerundio : gerundio)
+                                        </p>
+                                    }
+                                </li>
+                                <li>
+                                    <div>
+                                        <ul class="uk-list">
+                                            @{
+                                                string participioAux = formasImpersonales[1][0].Substring(0, formasImpersonales[1][0].Length - 1);
+                                                string[] generos = new string[] { "o", "a", "os", "as" };
+                                                List<string> participiosSinGenero = new List<string>();
+                                                foreach (string participio in formasImpersonales[1]) {
+                                                    participiosSinGenero.Add(participio.Substring(0, participio.Length - 1));
+                                                }
+                                                foreach (string genero in generos)
+                                                {
+                                                    string text = (string.Join(" / ", participiosSinGenero.Select(p => p+genero).ToArray()));
+                                                    <li><p>@(negar ? "no " + text : text)</p></li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -65,26 +80,29 @@
                         @_localizer["forma_impersonal_comp"].Value
                     </h3>
                     <div>
-                        <button class="uk-button uk-button-text close-btn"
+                        <button class="uk-button close-btn"
                                 uk-toggle="target: #verb_impersonal_compound; animation: uk-animation-fade"
                                 type="button"
                                 onclick="toggle()">
-                            Less
+                            <span uk-icon="icon: chevron-up; ratio: 1.5"></span>
+
                         </button>
                     </div>
                 </div>
-                <div id="verb_impersonal_compound" class="uk-grid-divider impersonal" uk-grid>
-                    <div class="uk-width-small">
-                        <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_compound">
-                            <li class="uk-active"><a href="#">@_localizer["infinitivo_comp"].Value</a></li>
-                            <li><a href="#">@_localizer["gerundio_comp"].Value</a></li>
-                        </ul>
-                    </div>
-                    <div class="uk-with-expand">
-                        <ul id="impersonal_compound" class="uk-switcher">
-                            <li><p>@(negar ? "no haber " + formasImpersonales[1] : "haber "+ formasImpersonales[1])</p></li>
-                            <li><p>@(negar ? "no habiendo " + formasImpersonales[1] : "habiendo "+ formasImpersonales[1])</p></li>
-                        </ul>
+                <div class="uk-card-body">
+                    <div id="verb_impersonal_compound" class="uk-grid-divider impersonal" uk-grid>
+                        <div class="uk-width-small">
+                            <ul class="uk-nav uk-nav-default" uk-switcher="connect: #impersonal_compound">
+                                <li class="uk-active"><a href="#">@_localizer["infinitivo_comp"].Value</a></li>
+                                <li><a href="#">@_localizer["gerundio_comp"].Value</a></li>
+                            </ul>
+                        </div>
+                        <div class="uk-with-expand">
+                            <ul id="impersonal_compound" class="uk-switcher">
+                                <li><p>@(negar ? "no haber " + string.Join(" / ", formasImpersonales[1]) : "haber "+ string.Join(" / ", formasImpersonales[1]))</p></li>
+                                <li><p>@(negar ? "no habiendo " + string.Join(" / ", formasImpersonales[1]) : "habiendo "+ string.Join(" / ", formasImpersonales[1]))</p></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,12 +110,12 @@
     </div>
 }
 @code {
-    [Parameter] public string[] formasImpersonales { get; set; }
+    [Parameter] public string[][] formasImpersonales { get; set; }
     [Parameter] public bool negar { get; set; }
 }
 
 @functions {
 
     protected override void OnInitialized()
-    {    }
+    { }
 }

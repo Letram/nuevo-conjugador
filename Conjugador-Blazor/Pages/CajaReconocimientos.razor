@@ -9,83 +9,85 @@
             @_localizer["titulo"]
         </h3>
         <div>
-            <button class="uk-button uk-button-text close-btn"
-                    uk-toggle="target: #verb_acknowledgements; animation: uk-animation-fade"
+            <button class="uk-button close-btn rotated"
+                    uk-toggle="target: #verb_acknowledgements; animation: uk-animation-fade;"
                     type="button"
                     onclick="toggle()">
-                Less
+                <span uk-icon="icon: chevron-up; ratio: 1.5"></span>
             </button>
         </div>
     </div>
-    <ul id="verb_acknowledgements" class="uk-list uk-list-divider">
-        @if (showImperativeFirst)
-        {
-            @foreach (int idFlexion in firstToShow.Select(infoCan => infoCan.IdFlexion).Distinct())
+    <div class="card-body">
+        <ul id="verb_acknowledgements" class="uk-list uk-list-divider" hidden>
+            @if (showImperativeFirst)
             {
-                <li>
-                    <p>
-                        @((MarkupString)string.Format(_localizer[idFlexion.ToString()], verbUserIsLookingFor, reconocimientoInfo.Verbo))
-                        @((MarkupString)string.Format(_localizer["pronombre"], reconocimientoInfo.Reconocimientos.First().Pronombres))
-                    </p>
-                </li>
-            }
-            @if (rest.Count() > 0)
-            {
-                <li>
-                    <p>En otros casos posibles, pero menos comunes:</p>
-                    <ul>
-                        @foreach (int idFlexion in rest.Select(infoCan => infoCan.IdFlexion).Distinct())
-                        {
-                            <li>
-                                <p>
-                                    @((MarkupString)string.Format(_localizer[idFlexion.ToString()], verbUserIsLookingFor, reconocimientoInfo.Verbo))
-                                    @if (hasPronoun)
-                                    {
-                                        @((MarkupString)string.Format(_localizer["pronombre"], reconocimientoInfo.Reconocimientos.First().Pronombres))
-                                    }
-                                </p>
-                            </li>
-                        }
-                    </ul>
-                </li>
-            }
-        }
-        else
-        {
-            @foreach (int idFlexion in reconocimientoInfo.Reconocimientos.Select(rec => rec.IdFlexion).Distinct())
-            {
-                <li>
-                    <p>
-                        @((MarkupString)string.Format(_localizer[idFlexion.ToString()], verbUserIsLookingFor, reconocimientoInfo.Verbo))
-                        @if (hasPronoun)
-                        {
+                @foreach (int idFlexion in firstToShow.Select(infoCan => infoCan.IdFlexion).Distinct())
+                {
+                    <li>
+                        <p>
+                            @((MarkupString)string.Format(_localizer[idFlexion.ToString()], verbUserIsLookingFor, reconocimientoInfo.Verbo))
                             @((MarkupString)string.Format(_localizer["pronombre"], reconocimientoInfo.Reconocimientos.First().Pronombres))
-                        }
-                    </p>
-                </li>
+                        </p>
+                    </li>
+                }
+                @if (rest.Count() > 0)
+                {
+                    <li>
+                        <p>En otros casos posibles, pero menos comunes:</p>
+                        <ul>
+                            @foreach (int idFlexion in rest.Select(infoCan => infoCan.IdFlexion).Distinct())
+                            {
+                                <li>
+                                    <p>
+                                        @((MarkupString)string.Format(_localizer[idFlexion.ToString()], verbUserIsLookingFor, reconocimientoInfo.Verbo))
+                                        @if (hasPronoun)
+                                        {
+                                            @((MarkupString)string.Format(_localizer["pronombre"], reconocimientoInfo.Reconocimientos.First().Pronombres))
+                                        }
+                                    </p>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
             }
-        }
-        <li>
-            <div class="uk-grid-small uk-text-center uk-child-width-expand@l uk-child-width-expand@m uk-child-width-1-2@s uk-child-width-1-1 verb_categories" uk-grid>
-                <div>
-                    <p>Verbo transitivo</p>
-                    <i class="fa @(isTransitive ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
+            else
+            {
+                @foreach (int idFlexion in reconocimientoInfo.Reconocimientos.Select(rec => rec.IdFlexion).Distinct())
+                {
+                    <li>
+                        <p>
+                            @((MarkupString)string.Format(_localizer[idFlexion.ToString()], verbUserIsLookingFor, reconocimientoInfo.Verbo))
+                            @if (hasPronoun)
+                            {
+                                @((MarkupString)string.Format(_localizer["pronombre"], reconocimientoInfo.Reconocimientos.First().Pronombres))
+                            }
+                        </p>
+                    </li>
+                }
+            }
+            <li>
+                <div class="uk-grid-small uk-text-center uk-child-width-expand@l uk-child-width-expand@m uk-child-width-1-2@s uk-child-width-1-1 verb_categories" uk-grid>
+                    <div>
+                        <p>Verbo transitivo</p>
+                        <i class="fa @(isTransitive ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
+                    </div>
+                    <div>
+                        <p>Verbo intransitivo</p>
+                        <i class="fa @(isIntransitive ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
+                    </div>
+                    <div>
+                        <p>Verbo pronominal</p>
+                        <i class="fa @(isPronominal ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
+                    </div>
+                    <div>
+                        <p>Aparece en la RAE</p>
+                        <i class="fa @(appearsInRAE ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
+                    </div>
                 </div>
-                <div>
-                    <p>Verbo intransitivo</p>
-                    <i class="fa @(isIntransitive ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
-                </div>
-                <div>
-                    <p>Verbo pronominal</p>
-                    <i class="fa @(isPronominal ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
-                </div>
-                <div>
-                    <p>Aparece en la RAE</p>
-                    <i class="fa @(appearsInRAE ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
-                </div>
-            </div>
-        </li>
-    </ul>
+            </li>
+        </ul>
+    </div>
 </div>
 @code {
     [Parameter] public ReconocimientoInfoCanonica reconocimientoInfo { get; set; } = new ReconocimientoInfoCanonica();

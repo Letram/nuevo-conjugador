@@ -6,7 +6,7 @@
     <div class="uk-width-auto">
         <input class="uk-checkbox" style="opacity: @(HasCheckbox ? "1" : "0" )" type="checkbox" name="@nota.IdNota" @onchange="e => OnCheckboxChange.InvokeAsync(nota.IdNota)" checked="@IsSelected" />
     </div>
-    <div class="uk-width-expand">
+    <div class="uk-width-expand" style="padding: 0 1rem">
         @if ((nota.IdNota >= 1000 && nota.IdNota <= 4999) || (nota.IdNota >= 6000 && nota.IdNota <= 7999))
         {
             <span class="note-description @(IsLoading ? "loading" : "")"@onclick="async e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>

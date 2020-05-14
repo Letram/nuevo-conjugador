@@ -22,9 +22,9 @@
 @if (reconocimientos.Count > 0)
 {
     <header id="verb_name">
-        <h1 class="uk-text-center">
+        <h2 class="uk-text-center">
             @((MarkupString)string.Format(_localizer["conjugacion_verbo"].Value, reconocimientos[_selectedIndex].FormaCanonica))
-        </h1>
+        </h2>
         @if (notas.Count > 0)
         {
             <p class="uk-text-meta uk-text-center @(IsLoading ? "loading" : "")" style="cursor: pointer;" id="same_conjugation" @onclick="async e => GetVerbosMismaconjugacion(notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).IdNota, notas.First(nota => nota.IdNota >= 7002 && nota.IdNota <= 7173).Descripcion)">
@@ -54,41 +54,44 @@
                 @_localizer["notas"].Value
             </h3>
             <div>
-                <button class="uk-button uk-button-text close-btn"
+                <button class="uk-button close-btn rotated"
                         uk-toggle="target: #notes; animation: uk-animation-fade"
                         type="button"
                         onclick="toggle()">
-                    Less
+                    <span uk-icon="icon: chevron-up; ratio: 1.5"></span>
                 </button>
             </div>
         </div>
-        <div id="notes">
-            @if (notas.Count > 1)
-            {
-                @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 1000 && notaAux.IdNota <= 7999))
+        <div class="uk-card-body">
+
+            <div id="notes" hidden>
+                @if (notas.Count > 1)
                 {
-                    if (nota.IdNota < 7002 || nota.IdNota > 7173)
+                    @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 1000 && notaAux.IdNota <= 7999))
                     {
-                        <TablaConNota conjugador="_conjugador"
-                                      HasCheckbox="conjugaciones.Any(conjugacion => (conjugacion.IdNotas != null && conjugacion.IdNotas.Contains(nota.IdNota)) && (conjugacion.IdFlexion != 1))"
-                                      IsSelected="selectedNotas.Contains(nota.IdNota)"
-                                      nota="nota"
-                                      OnCheckboxChange="ManageListOfNotesWithNoteId">
-                        </TablaConNota>
+                        if (nota.IdNota < 7002 || nota.IdNota > 7173)
+                        {
+                            <TablaConNota conjugador="_conjugador"
+                                          HasCheckbox="conjugaciones.Any(conjugacion => (conjugacion.IdNotas != null && conjugacion.IdNotas.Contains(nota.IdNota)) && (conjugacion.IdFlexion != 1))"
+                                          IsSelected="selectedNotas.Contains(nota.IdNota)"
+                                          nota="nota"
+                                          OnCheckboxChange="ManageListOfNotesWithNoteId">
+                            </TablaConNota>
+                        }
+                    }
+                    //fuentes
+                    @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 9001 && notaAux.IdNota <= 9018))
+                    {
+                        <label style="margin-top:1.25rem;">
+                            <span>@((MarkupString)(nota.Descripcion))</span>
+                        </label>
                     }
                 }
-                //fuentes
-                @foreach (Nota nota in notas.Where(notaAux => notaAux.IdNota >= 9001 && notaAux.IdNota <= 9018))
+                else
                 {
-                    <label style="margin-top:1.25rem;">
-                        <span>@((MarkupString)(nota.Descripcion))</span>
-                    </label>
+                    <h5 class="uk-text-meta uk-text-center">@_localizer["no_notas"]</h5>
                 }
-            }
-            else
-            {
-                <h5 class="uk-text-meta uk-text-center">@_localizer["no_notas"]</h5>
-            }
+            </div>
         </div>
     </div>
     <TablaModos indicativo="modoIndicativo"
@@ -142,7 +145,7 @@ else
     private List<Nota> notas { get; set; }
     private List<int> selectedNotas { get; set; }
 
-    private string[] formasImpersonales { get; set; }
+    private string[][] formasImpersonales { get; set; }
 
     private ModoVerbo modoIndicativo { get; set; }
     private ModoVerbo modoImperativo { get; set; }
@@ -258,10 +261,10 @@ else
         conjugaciones = await GetInfoConjugaciones(reconocimientoInfoCanonicas[_selectedIndex]);
         if (conjugaciones != null)
         {
-            formasImpersonales = new String[3];
-            formasImpersonales[0] = conjugaciones[0].Forma; //inf
-            formasImpersonales[1] = conjugaciones[1].Forma; //par
-            formasImpersonales[2] = conjugaciones[2].Forma; //ger
+            formasImpersonales = new String[3][];
+            formasImpersonales[0] = conjugaciones.Where(conj => conj.IdFlexion == 1).Select(conj => conj.Forma).ToArray(); //inf
+            formasImpersonales[1] = conjugaciones.Where(conj => conj.IdFlexion == 2).Select(conj => conj.Forma).ToArray(); //par
+            formasImpersonales[2] = conjugaciones.Where(conj => conj.IdFlexion == 3).Select(conj => conj.Forma).ToArray(); //ger
             modoIndicativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 10 && conjugacion.IdFlexion <= 57).ToList(), "Indicativo");
             modoSubjuntivo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 60 && conjugacion.IdFlexion <= 87).ToList(), "Subjuntivo");
             modoImperativo = FormatearConjugaciones(conjugaciones.Where(conjugacion => conjugacion.IdFlexion >= 90 && conjugacion.IdFlexion <= 98).ToList(), "Imperativo");

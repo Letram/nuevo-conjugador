@@ -13,13 +13,13 @@
 <!-- SEARCH FORM -->
 <div id="search_form" class="uk-container">
     <header>
-        <h1 class="uk-text-center">@_localizer["escribe_verbo"].Value</h1>
+        <h2 class="uk-text-center">@_localizer["escribe_verbo"].Value</h2>
     </header>
     <div class="form-container uk-flex uk-flex-column uk-flex-middle">
         <span class="input-container">
-            <input type="text" name="verb" id="form_verb" @bind-value="searchInput" />
+            <input type="text" name="verb" id="form_verb" onkeyup="pressEnterIfNeeded(event)" @bind-value="searchInput" />
         </span>
-        <button disabled="@IsLoading" type="button" class="uk-button uk-button-secondary" style="width:40%; margin-top:0.25rem;" @onclick:preventDefault @onclick:stopPropagation @onclick=@(e => OnSearchBtnClicked())>@_localizer["consultar"].Value</button>
+        <button id="searchBtn" disabled="@IsLoading" type="button" class="uk-button" style="width:40%; margin-top:0.25rem;" @onclick:preventDefault @onclick:stopPropagation @onclick=@(e => OnSearchBtnClicked())>@_localizer["consultar"].Value</button>
     </div>
 </div>
 <hr>

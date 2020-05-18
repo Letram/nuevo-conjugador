@@ -11,13 +11,16 @@
 @using System.Collections.Concurrent
 @using System.Text.Json
 @using System.Text.Json.Serialization
-
+@using System.Dynamic
+ 
 @inject ConjugacionesHaber _conjugacionesHaber
 
 @inject IStringLocalizer<TablaReconocimientos> _localizer
 @inject NavigationManager _navigationManager
-@*<TablaCanonica infos="infoArr"></TablaCanonica>
-    <TablaResultadoReconocimientos reconocimientos="reconocimientos"></TablaResultadoReconocimientos>*@
+
+    <TablaCanonica infos="infoArr"></TablaCanonica>
+    <TablaResultadoReconocimientos reconocimientos="reconocimientos"></TablaResultadoReconocimientos>
+
 
 @if (reconocimientos.Count > 0)
 {
@@ -41,9 +44,16 @@
             int index = reconocimientoInfoCanonicas.IndexOf(reconocimientoInfoCanonica);
             <div id="@index" class="uk-card uk-card-small uk-card-default @((_selectedIndex == index) ? "selected" : "")"
                  @onclick="e => GetDataFromSelectedIndex(index)">
-                <p class="uk-text-center">
-                    @string.Format(_localizer["verbo_seleccion"], searchText, reconocimientoInfoCanonica.Verbo)
-                </p>
+                @if (searchText.ToLower().Equals(reconocimientoInfoCanonica.Verbo.ToLower()))
+                {
+                    <p class="uk-text-center">@reconocimientoInfoCanonica.Verbo</p>
+                }
+                else
+                {
+                    <p class="uk-text-center">
+                        @string.Format(_localizer["verbo_seleccion"], searchText, reconocimientoInfoCanonica.Verbo)
+                    </p>
+                }
             </div>
         }
     </div>
@@ -513,12 +523,21 @@ else
     private async Task<List<InfoConjugacion>> GetInfoConjugaciones(ReconocimientoInfoCanonica reconocimientoInfoCanonica)
     {
         List<InfoConjugacion> aux = null;
+        var listaDeListasDeConjugaciones= new List<dynamic>();
+
         List<int> ids = reconocimientoInfoCanonica.Reconocimientos.Select(rec => rec.IdFormaCanonica).ToList();
         int index = 0;
-        while (aux == null && index <= ids.Count - 1)
+        while (/*aux == null && */index <= ids.Count - 1)
         {
             var listAux = await _conjugador.GetInfoConjugacion(ids[index]);
-            if (listAux != null) aux = listAux;
+            if (listAux != null)
+            {
+                aux = listAux;
+                dynamic conjugacionesConId = new ExpandoObject();
+                conjugacionesConId.id = ids[index];
+                conjugacionesConId.conjugaciones = listAux;
+                listaDeListasDeConjugaciones.Add(conjugacionesConId);
+            }
             index++;
         }
 

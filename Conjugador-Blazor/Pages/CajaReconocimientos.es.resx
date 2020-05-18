@@ -297,6 +297,9 @@
   <data name="77" xml:space="preserve">
     <value>&lt;span&gt;{0}&lt;/span&gt; es la 2ª persona del plural del pretérito de subjuntivo (ustedes) del verbo &lt;span&gt;{1}&lt;/span&gt; </value>
   </data>
+  <data name="80" xml:space="preserve">
+    <value>&lt;span&gt;{0}&lt;/span&gt; es la 1ª persona del singular del futuro de subjuntivo del verbo &lt;span&gt;{1}&lt;/span&gt;</value>
+  </data>
   <data name="81" xml:space="preserve">
     <value>&lt;span&gt;{0}&lt;/span&gt; es la 2ª persona del singular del futuro de subjuntivo del verbo &lt;span&gt;{1}&lt;/span&gt; </value>
   </data>

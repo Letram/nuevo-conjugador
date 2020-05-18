@@ -26,7 +26,6 @@ namespace Conjugador_Blazor
                 {
                     using (var corrector = new ServicioSpellerClient(ServicioSpellerClient.EndpointConfiguration.BasicHttpsBinding_IServicioSpeller))
                     {
-
                         ThreadPool.QueueUserWorkItem(
                         new WaitCallback(delegate
                         {

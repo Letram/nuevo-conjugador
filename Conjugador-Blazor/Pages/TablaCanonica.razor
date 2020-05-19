@@ -2,43 +2,86 @@
 @using ConexionLematizador
 @using Data
 
-<h2>Tabla infoCanonica</h2>
-<table class="uk-table">
-    <thead>
-        <tr>
-            @foreach (string header in canonicaHeaders)
-            {
-                <th>@header</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (InfoCanonica info in infos)
-        {
+<h2>Tabla infoCanonica con id</h2>
+<div style="overflow: scroll">
+    <table class="uk-table">
+        <thead>
             <tr>
-                <td>@info.Antigua</td>
-                <td>@info.DRAEXXIII</td>
-                <td>@info.FormaCanonica</td>
-                <td>@info.Frecuencia</td>
-                <td>@info.IdCategoria</td>
-                <td>@info.IdCategoriaGN</td>
-                <td>@info.IdFlexion</td>
-                <td>@info.MaxAcepciones</td>
-                <td>@info.MaxEtimologia</td>
-                <td>@info.NumAcepcion</td>
-                <td>@info.NumAcepcionSec</td>
-                <td>@info.NumEtimologia</td>
-                <td>@info.PosAcepcion</td>
-                <td>@info.PosAcepcionSec</td>
+                @foreach (string header in canonicaHeaders)
+                {
+                    <th>@header</th>
+                }
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (InfoCanonicaConId infoConId in infos_2)
+            {
+                InfoCanonica info = infoConId.infoCanonica;
+                <tr>
+                    <td>@infoConId.idFormaCanonica</td>
+                    <td>@info.Antigua</td>
+                    <td>@info.DRAEXXIII</td>
+                    <td>@info.FormaCanonica</td>
+                    <td>@info.Frecuencia</td>
+                    <td>@info.IdCategoria</td>
+                    <td>@info.IdCategoriaGN</td>
+                    <td>@info.IdFlexion</td>
+                    <td>@info.MaxAcepciones</td>
+                    <td>@info.MaxEtimologia</td>
+                    <td>@info.NumAcepcion</td>
+                    <td>@info.NumAcepcionSec</td>
+                    <td>@info.NumEtimologia</td>
+                    <td>@info.PosAcepcion</td>
+                    <td>@info.PosAcepcionSec</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<h2>Tabla infoCanonica sin id</h2>
+
+<div style="overflow: scroll">
+    <table class="uk-table">
+        <thead>
+            <tr>
+                @foreach (string header in canonicaHeaders.Skip(1))
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (InfoCanonica info in infos)
+            {
+                <tr>
+                    <td>@info.Antigua</td>
+                    <td>@info.DRAEXXIII</td>
+                    <td>@info.FormaCanonica</td>
+                    <td>@info.Frecuencia</td>
+                    <td>@info.IdCategoria</td>
+                    <td>@info.IdCategoriaGN</td>
+                    <td>@info.IdFlexion</td>
+                    <td>@info.MaxAcepciones</td>
+                    <td>@info.MaxEtimologia</td>
+                    <td>@info.NumAcepcion</td>
+                    <td>@info.NumAcepcionSec</td>
+                    <td>@info.NumEtimologia</td>
+                    <td>@info.PosAcepcion</td>
+                    <td>@info.PosAcepcionSec</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 
 @code {
+    [Parameter] public ConcurrentSet<InfoCanonicaConId> infos_2 { get; set; } = new ConcurrentSet<InfoCanonicaConId>();
     [Parameter] public ConcurrentSet<InfoCanonica> infos { get; set; } = new ConcurrentSet<InfoCanonica>(new InfoCanonicaComparer());
     private string[] canonicaHeaders =
 {
+            "IdFormaCanonica",
             "AntiguaField",
             "DRAEXXIIIField",
             "FormaCanonicaField",

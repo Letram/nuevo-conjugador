@@ -67,7 +67,7 @@
                 }
             }
             <li>
-                <div class="uk-grid-small uk-text-center uk-child-width-expand@l uk-child-width-expand@m uk-child-width-1-2@s uk-child-width-1-1 verb_categories" uk-grid>
+                <div class="uk-grid-small uk-text-center uk-child-width-expand@l uk-child-width-expand@m uk-child-width-1-2@s uk-child-width-1-2 verb_categories" uk-grid>
                     <div>
                         <p>Verbo transitivo</p>
                         <i class="fa @(isTransitive ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
@@ -81,8 +81,17 @@
                         <i class="fa @(isPronominal ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
                     </div>
                     <div>
-                        <p>Aparece en la RAE</p>
-                        <i class="fa @(appearsInRAE ? "fa-check fa-2x green" : "fa-times fa-2x red")"></i>
+                        <p>Aparición en DRAE</p>
+                        @if (appearsInRAE)
+                        {
+                            <a href=@("http://dle.rae.es/?w=" + verbUserIsLookingFor.ToLower()) target="_blank">
+                                <i class="fa fa-external-link-square fa-2x orange"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <i class="fa-times fa-2x red"></i>
+                        }
                     </div>
                 </div>
             </li>

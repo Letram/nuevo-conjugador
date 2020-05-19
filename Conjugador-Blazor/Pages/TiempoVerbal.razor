@@ -6,10 +6,12 @@
 <div class="tense-container @(lenguajeConjugacion[0].Count > 1 ? "uk-width-2-3@m uk-width-1-2@s" : "uk-width-1-3@m uk-width-1-2@s")">
     <div class="uk-card uk-card-default uk-card-body">
         <div class="verb_tense">
-            <div class="uk-card-badge uk-label @badgeClass[modo] custom-badge">@modos[modo]</div>
-            <h3 class="uk-card-title">
-                @_localizer[nombreConjugacion[0]]
-            </h3>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="uk-card-title">
+                    @_localizer[nombreConjugacion[0]]
+                </h3>
+                <div class="uk-card-badge uk-label @badgeClass[modo] custom-badge">@modos[modo]</div>
+            </div>
             <p class="uk-text-meta uk-margin-remove-top additional_info">@_localizer[nombreConjugacion[1]]</p>
             <hr>
             @if (lenguajeConjugacion[0].Count > 1)
@@ -138,7 +140,7 @@
     [Parameter] public List<List<InfoConjugacion>> lenguajeConjugacion { get; set; }
     [Parameter] public bool[] opciones { get; set; }
     [Parameter] public List<int> notasSeleccionadas { get; set; }
-    private string[] modos = { "Indicativo", "Subjuntivo", "Imperativo" };
+    private string[] modos = { "Ind", "Sub", "Imp" };
     private string[] badgeClass = { "uk-label-success", "label-royalblue", "uk-label-danger" };
 }
 @functions{

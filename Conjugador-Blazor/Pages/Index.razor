@@ -54,7 +54,7 @@
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        if (wantToSearch && !lastSearchInput.Equals(searchInput))
+        if (wantToSearch && !lastSearchInput.Equals(searchInput.ToLower()))
         {
             await Search();
         }
@@ -75,9 +75,9 @@
             IsLoading = true;
             isFirstLoad = false;
             StateHasChanged();
-            lastSearchInput = searchInput;
-            navigatableSearchInput = searchInput;
-            await tablaReconocimientos.SearchVerb(searchInput);
+            lastSearchInput = searchInput.ToLower();
+            navigatableSearchInput = searchInput.ToLower();
+            await tablaReconocimientos.SearchVerb(searchInput.ToLower());
         }
     }
 
@@ -95,7 +95,7 @@
     private void OnSearchBtnClicked()
     {
         if (searchInput != null && !searchInput.Equals(""))
-            _navigationManager.NavigateTo(_navigationManager.BaseUri + "conjugador/" + searchInput);
+            _navigationManager.NavigateTo(_navigationManager.BaseUri + "conjugador/" + searchInput.ToLower(), forceLoad: true);
     }
 
     private void OnSearchDone()

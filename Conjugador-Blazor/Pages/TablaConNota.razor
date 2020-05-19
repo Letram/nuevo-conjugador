@@ -2,22 +2,25 @@
 @using Services
 @using ConexionConjugador
 
-<div uk-grid>
-    <div class="uk-width-auto">
-        <input class="uk-checkbox" style="opacity: @(HasCheckbox ? "1" : "0" )" type="checkbox" name="@nota.IdNota" @onchange="e => OnCheckboxChange.InvokeAsync(nota.IdNota)" checked="@IsSelected" />
+@if (nota.IdNota != nota.IdNotaAgrupada)
+{
+    <div uk-grid>
+        <div class="uk-width-auto">
+            <input class="uk-checkbox" style="opacity: @(HasCheckbox ? "1" : "0" )" type="checkbox" name="@nota.IdNota" @onchange="e => OnCheckboxChange.InvokeAsync(nota.IdNota)" checked="@IsSelected" />
+        </div>
+        <div class="uk-width-expand" style="padding: 0 1rem">
+            @if ((nota.IdNota >= 1000 && nota.IdNota <= 4999) || (nota.IdNota >= 6000 && nota.IdNota <= 7999))
+            {
+                <span class="note-description @(IsLoading ? "loading" : "")" @onclick="async e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>
+            }
+            else
+            {
+                <span>@((MarkupString)(nota.Descripcion))</span>
+            }
+        </div>
     </div>
-    <div class="uk-width-expand" style="padding: 0 1rem">
-        @if ((nota.IdNota >= 1000 && nota.IdNota <= 4999) || (nota.IdNota >= 6000 && nota.IdNota <= 7999))
-        {
-            <span class="note-description @(IsLoading ? "loading" : "")"@onclick="async e => GetVerbosConNota(nota.IdNota, nota.Descripcion)" style="cursor:pointer;">@((MarkupString)(nota.Descripcion))</span>
-        }
-        else
-        {
-            <span>@((MarkupString)(nota.Descripcion))</span>
-        }
-    </div>
-</div>
-<TablaResultados listOfResults="verbosConNota" titleOfNote="@nota.Descripcion"></TablaResultados>
+    <TablaResultados listOfResults="verbosConNota" titleOfNote="@nota.Descripcion"></TablaResultados>
+}
 
 @code {
     [Parameter] public bool IsSelected { get; set; }
@@ -45,7 +48,7 @@
         }
         else
         {
-        List<string> res = await conjugador.GetVerbosConNotaAsync(idNota);
+            List<string> res = await conjugador.GetVerbosConNotaAsync(idNota);
             verbosConNota = res;
         }
         IsLoading = false;

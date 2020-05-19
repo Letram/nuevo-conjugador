@@ -11,7 +11,11 @@ namespace Conjugador_Blazor.Data
     {
         public bool Equals([AllowNull] InfoCanonica x, [AllowNull] InfoCanonica y)
         {
-            return x.FormaCanonica.Equals(y.FormaCanonica) && x.IdCategoria == y.IdCategoria && x.IdCategoriaGN == y.IdCategoriaGN && x.IdFlexion == y.IdFlexion;
+            return x.FormaCanonica.Equals(y.FormaCanonica) 
+                && x.Frecuencia == y.Frecuencia
+                && x.IdCategoria == y.IdCategoria 
+                && x.IdCategoriaGN == y.IdCategoriaGN 
+                && x.IdFlexion == y.IdFlexion;
         }
 
         public int GetHashCode([DisallowNull] InfoCanonica obj)

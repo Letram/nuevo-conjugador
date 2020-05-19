@@ -158,6 +158,9 @@ $royalblue: #4169e1;
                 &.red {
                     color: red;
                 }
+                &.orange{
+                    color: orange;
+                }
             }
         }
     }
@@ -207,8 +210,10 @@ $royalblue: #4169e1;
 
         .verb_tense {
             .custom-badge {
-                top: 2%;
-                right: 2%;
+                /*top: 2%;
+                right: 2%;*/
+                position: inherit;
+                height: max-content;
             }
 
             .uk-card-title {
@@ -328,7 +333,7 @@ $royalblue: #4169e1;
 
         .tense-container {
             .uk-card {
-                padding-top: 2rem;
+                /*padding-top: 2rem;*/
             }
         }
     }
